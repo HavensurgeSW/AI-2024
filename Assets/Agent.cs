@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Flags {
+    InventoryFull, ReachResource, ReachTown, AlarmRang, ResourceDepleted, Commanded
+}
 public class Agent : MonoBehaviour
 {
     FSM fsm;
@@ -12,9 +15,6 @@ public class Agent : MonoBehaviour
         Moving, Gathering, Depositing, Idle
     };
 
-    public enum Flags {
-        InventoryFull, ReachResource, ReachTown, AlarmRang, ResourceDepleted, Commanded
-    }
 
     private void Start()
     {

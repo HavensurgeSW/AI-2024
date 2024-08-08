@@ -28,7 +28,7 @@ public class FSM
     public int AddBehaviour(State state)
     {
         stateCount++;
-        state.onTransition += Transition;
+        state.OnTransition += Transition;
         behaviour.Add(behaviour.Count, state);
         return stateCount - 1;
     }
@@ -38,7 +38,9 @@ public class FSM
     }
 
     public void Transition(int flag) {
+        behaviour[currentState].OnExit();
         currentState = transitions[currentState, flag];
+        behaviour[currentState].OnEnter();
     }
 
     public void Tick() { 
