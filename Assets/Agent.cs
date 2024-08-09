@@ -6,14 +6,14 @@ using UnityEngine;
 public enum Flags {
     InventoryFull, ReachResource, ReachTown, AlarmRang, ResourceDepleted, Commanded
 }
+public enum Commands
+{
+    Moving, Gathering, Depositing, Idle
+};
 public class Agent : MonoBehaviour
 {
     FSM fsm;
 
-    public enum Commands
-    {
-        Moving, Gathering, Depositing, Idle
-    };
 
 
     private void Start()
