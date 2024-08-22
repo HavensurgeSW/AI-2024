@@ -219,6 +219,7 @@ public sealed class MoveTowards : State
         Transform ownerTransform = parameters[0] as Transform;
         Transform targetTransform = parameters[1] as Transform;
         float speed = Convert.ToSingle(parameters[2]);
+        float distanceToTGT = Convert.ToSingle(parameters[3]);
 
         BehaviourActions behaviours = new BehaviourActions();
         behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Moving..."); });
@@ -226,6 +227,14 @@ public sealed class MoveTowards : State
             ownerTransform.position = Vector3.MoveTowards(ownerTransform.position, targetTransform.position, speed * Time.deltaTime);    
         });
 
+
+        behaviours.SetTransitionBehaviour(() =>
+        {
+            if (Vector3.Distance(ownerTransform.position, targetTransform.position) < distanceToTGT)
+            {
+                OnFlag?.Invoke(Flags.OnTargetNear);
+            }
+        });
 
         return behaviours;
     }
