@@ -225,6 +225,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1248021485}
   - component: {fileID: 1248021484}
+  - component: {fileID: 1248021486}
   m_Layer: 0
   m_Name: MapManager
   m_TagString: Untagged
@@ -248,6 +249,7 @@ MonoBehaviour:
   gridWidth: 10
   gridHeight: 10
   tileSpacing: 1.2
+  graphManager: {fileID: 1248021486}
 --- !u!4 &1248021485
 Transform:
   m_ObjectHideFlags: 0
@@ -263,6 +265,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1248021486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1248021483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e560d7664b5c8849b66a3b33a2103fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startNode: {fileID: 0}
+  destinationNode: {fileID: 0}
 --- !u!1 &1461397263
 GameObject:
   m_ObjectHideFlags: 0
