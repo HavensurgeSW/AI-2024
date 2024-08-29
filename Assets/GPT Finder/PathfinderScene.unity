@@ -279,6 +279,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startNode: {fileID: 0}
   destinationNode: {fileID: 0}
+  pathStartMaterial: {fileID: 2100000, guid: 38c2ec6cbea03db4e88dbdca15731e60, type: 2}
+  pathEndMaterial: {fileID: 2100000, guid: 17ac6c1615232d642b766bb632dbc319, type: 2}
+  pathMaterial: {fileID: 2100000, guid: 69fcccdcb75b7df438901d8138827170, type: 2}
 --- !u!1 &1461397263
 GameObject:
   m_ObjectHideFlags: 0

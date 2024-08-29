@@ -13,7 +13,7 @@ public class Pathfinding
 
         while (stack.Count > 0)
         {
-            Node currentNode = stack.Pop();
+            Node currentNode = stack.Pop();        
 
             if (!currentNode.visited)
             {

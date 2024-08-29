@@ -13,6 +13,7 @@ public class GraphManager : MonoBehaviour
     [SerializeField]Material pathMaterial;
 
     private Pathfinding pathfinding = new Pathfinding();
+   
 
     // Method to set the nodes created by MapManager
     public void SetNodes(List<Node> nodes)
