@@ -38,7 +38,8 @@ public class GraphManager : MonoBehaviour
                 // Perform a Depth-First Search to find a path to the destinationNode
                 startNode.GetComponent<Renderer>().material = pathStartMaterial;
                 destinationNode.GetComponent<Renderer>().material = pathEndMaterial;
-                bool pathFound = pathfinding.DepthFirstSearch(startNode, destinationNode);
+                RandomizeDistances();
+                bool pathFound = pathfinding.Dijkstra(startNode, destinationNode);
 
                 if (pathFound)
                 {
@@ -52,5 +53,21 @@ public class GraphManager : MonoBehaviour
         }
     }
 
-   
+    public void RandomizeDistances()
+    {
+        System.Random random = new System.Random();
+
+        foreach (Node node in allNodes)
+        {
+            foreach (Node neighbor in node.neighbors)
+            {
+                float randomDistance = random.Next(1, 11);
+                node.distance = randomDistance;
+                neighbor.distance = randomDistance;
+            }
+        }
+        Debug.Log("Distances between nodes have been randomized.");
+    }
+
+
 }
