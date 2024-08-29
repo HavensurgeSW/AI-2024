@@ -8,14 +8,13 @@ public class GraphManager : MonoBehaviour
 
     private List<Node> allNodes = new List<Node>();
 
-    [SerializeField]Material pathStartMaterial;
-    [SerializeField]Material pathEndMaterial;
+    [SerializeField]Material pathStartMaterial;    [SerializeField]Material pathEndMaterial;
     [SerializeField]Material pathMaterial;
 
     private Pathfinding pathfinding = new Pathfinding();
    
 
-    // Method to set the nodes created by MapManager
+    
     public void SetNodes(List<Node> nodes)
     {
         allNodes = nodes;
@@ -25,7 +24,7 @@ public class GraphManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            // Reset the graph when the 'R' key is pressed
+        
             pathfinding.ResetNodes(allNodes);
         }
 
@@ -35,7 +34,7 @@ public class GraphManager : MonoBehaviour
             
             if (startNode != null && destinationNode != null)
             {
-                // Perform a Depth-First Search to find a path to the destinationNode
+                
                 startNode.GetComponent<Renderer>().material = pathStartMaterial;
                 destinationNode.GetComponent<Renderer>().material = pathEndMaterial;
                 RandomizeDistances();

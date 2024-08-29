@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class Pathfinding
 {
-    // Depth-First Search implementation with destination node
     public bool DepthFirstSearch(Node startNode, Node destinationNode)
     {
         if (startNode == null || destinationNode == null) return false;
@@ -20,7 +19,7 @@ public class Pathfinding
                 currentNode.visited = true;
                 Debug.Log($"Visited Node: {currentNode.gameObject.name}");
 
-                // Check if we've reached the destination node
+                
                 if (currentNode == destinationNode)
                 {
                     Debug.Log("Destination node reached!");
@@ -37,11 +36,11 @@ public class Pathfinding
             }
         }
 
-        // Return false if destination node is not reachable
+        
         return false;
     }
 
-    // Breadth-First Search (BFS) - Empty for now
+   
     public bool BreadthFirstSearch(Node startNode, Node destinationNode)
     {
         if (startNode == null || destinationNode == null) return false;
@@ -55,7 +54,7 @@ public class Pathfinding
             Node currentNode = queue.Dequeue();
             Debug.Log($"Visited Node: {currentNode.gameObject.name}");
 
-            // Check if we've reached the destination node
+          
             if (currentNode == destinationNode)
             {
                 Debug.Log("Destination node reached!");
@@ -66,13 +65,13 @@ public class Pathfinding
             {
                 if (!neighbor.visited)
                 {
-                    neighbor.visited = true;  // Mark neighbor as visited
+                    neighbor.visited = true;  
                     queue.Enqueue(neighbor);
                 }
             }
         }
 
-        // Return false if destination node is not reachable
+        
         return false;
     }
 
@@ -80,20 +79,20 @@ public class Pathfinding
     {
         if (startNode == null || destinationNode == null) return false;
 
-        // Initialize the priority queue (using a sorted list as a simple priority queue)
+
+        //SortedList esta bueno para pre-loaded data, es un toque mas lenta para agregar cosas durante runtime
         SortedList<float, Node> priorityQueue = new SortedList<float, Node>();
 
-        // Set the start node's distance to 0 and add it to the priority queue
         startNode.distance = 0;
         priorityQueue.Add(startNode.distance, startNode);
 
         while (priorityQueue.Count > 0)
         {
-            // Get the node with the smallest distance (the first element in the sorted list)
+     
             Node currentNode = priorityQueue.Values[0];
             priorityQueue.RemoveAt(0);
 
-            // If we reach the destination node, we're done
+            
             if (currentNode == destinationNode)
             {
                 Debug.Log("Destination node reached!");
@@ -102,12 +101,12 @@ public class Pathfinding
 
             currentNode.visited = true;
 
-            // Explore neighbors
+            
             foreach (Node neighbor in currentNode.neighbors)
             {
                 if (!neighbor.visited)
                 {
-                    // Calculate the tentative distance to the neighbor
+                   
                     float tentativeDistance = currentNode.distance + Vector3.Distance(currentNode.transform.position, neighbor.transform.position);
 
                     if (tentativeDistance < neighbor.distance)
@@ -115,7 +114,7 @@ public class Pathfinding
                         neighbor.distance = tentativeDistance;
                         neighbor.previousNode = currentNode;
 
-                        // Add the neighbor to the priority queue or update its position
+                        
                         if (!priorityQueue.ContainsValue(neighbor))
                         {
                             priorityQueue.Add(neighbor.distance, neighbor);
@@ -129,8 +128,6 @@ public class Pathfinding
                 }
             }
         }
-
-        // Return false if the destination node is not reachable
         return false;
     }
 
