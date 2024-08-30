@@ -131,10 +131,86 @@ public class Pathfinding
         return false;
     }
 
-    // A* Algorithm - Empty for now
-    public void AStar(Node startNode, Node destinationNode)
+    public bool AStar(Node startNode, Node destinationNode)
     {
-        // A* algorithm implementation will go here
+        if (startNode == null || destinationNode == null) return false;
+
+        // Initialize the open and closed lists
+        List<Node> openList = new List<Node>();
+        HashSet<Node> closedList = new HashSet<Node>();
+
+        // Initialize the start node
+        startNode.cost = 0;
+        startNode.heuristic = Heuristic(startNode, destinationNode);
+        openList.Add(startNode);
+
+        while (openList.Count > 0)
+        {
+            // Get the node with the lowest F score (F = G + H)
+            Node currentNode = GetNodeWithLowestFScore(openList);
+
+            // If we reach the destination node, we're done
+            if (currentNode == destinationNode)
+            {
+                Debug.Log("Destination node reached!");
+                return true;
+            }
+           
+            openList.Remove(currentNode);
+            closedList.Add(currentNode);
+            currentNode.visited = true;
+
+            // Explore neighbors
+            foreach (Node neighbor in currentNode.neighbors)
+            {
+                if (closedList.Contains(neighbor))
+                {
+                    continue; // Skip already evaluated nodes
+                }
+
+                float tentativeCost = currentNode.cost + Vector3.Distance(currentNode.transform.position, neighbor.transform.position);
+
+                if (!openList.Contains(neighbor) || tentativeCost < neighbor.cost)
+                {
+                    neighbor.previousNode = currentNode;
+                    neighbor.cost = tentativeCost;
+                    neighbor.heuristic = Heuristic(neighbor, destinationNode);
+
+                    if (!openList.Contains(neighbor))
+                    {
+                        openList.Add(neighbor);
+                    }
+                }
+            }
+        }
+
+        // Return false if the destination node is not reachable
+        return false;
+    }
+
+    // Heuristic function: Using Euclidean distance as a heuristic
+    private float Heuristic(Node node, Node destinationNode)
+    {
+        return Vector3.Distance(node.transform.position, destinationNode.transform.position);
+    }
+
+    // Get the node with the lowest F score from the open list
+    private Node GetNodeWithLowestFScore(List<Node> openList)
+    {
+        Node lowestFScoreNode = openList[0];
+
+        foreach (Node node in openList)
+        {
+            float fScore = node.cost + node.heuristic;
+            float lowestFScore = lowestFScoreNode.cost + lowestFScoreNode.heuristic;
+
+            if (fScore < lowestFScore)
+            {
+                lowestFScoreNode = node;
+            }
+        }
+
+        return lowestFScoreNode;
     }
 
     // Method to reset all nodes
