@@ -6,13 +6,8 @@ public class GraphManager : MonoBehaviour
     public Node startNode;
     public Node destinationNode;
 
-    private List<Node> allNodes = new List<Node>();
-
-    [SerializeField]Material pathStartMaterial;    [SerializeField]Material pathEndMaterial;
-    [SerializeField]Material pathMaterial;
-
+    public List<Node> allNodes = new List<Node>();
     private Pathfinding pathfinding = new Pathfinding();
-   
 
     
     public void SetNodes(List<Node> nodes)
@@ -35,8 +30,6 @@ public class GraphManager : MonoBehaviour
             if (startNode != null && destinationNode != null)
             {
                 
-                startNode.GetComponent<Renderer>().material = pathStartMaterial;
-                destinationNode.GetComponent<Renderer>().material = pathEndMaterial;
                 RandomizeDistances();
                 bool pathFound = pathfinding.Dijkstra(startNode, destinationNode);
 

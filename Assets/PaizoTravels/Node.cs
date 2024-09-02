@@ -12,17 +12,20 @@ public class Node : MonoBehaviour
 
     public bool visited = false;  // Whether the node has been visited or not
 
-    // Method to add a neighbor to the node
+    [Header("Game Properties")]
+    [SerializeField] private Structure structure = null;
+    private Material material = null;
+
     public void AddNeighbor(Node neighbor)
     {
         if (!neighbors.Contains(neighbor))
         {
             neighbors.Add(neighbor);
-            neighbor.neighbors.Add(this);  // Optionally, add this node to the neighbor's list as well
+            neighbor.neighbors.Add(this);
         }
     }
 
-    // Reset the node's properties for a new pathfinding operation
+    
     public void ResetNode()
     {
         distance = Mathf.Infinity;
@@ -30,5 +33,18 @@ public class Node : MonoBehaviour
         heuristic = Mathf.Infinity;
         previousNode = null;
         visited = false;
+        material = null;
     }
+
+    public void SetStructure(Structure str)
+    {
+        structure = str;       
+    }
+
+    public bool CheckForStructure() { return structure != null; }
+
+    public void SetMaterial(Material mat) {
+        material = mat;
+    }
+
 }

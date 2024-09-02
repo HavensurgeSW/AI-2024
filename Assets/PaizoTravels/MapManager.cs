@@ -1,21 +1,35 @@
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 public class MapManager : MonoBehaviour
 {
+    [Header("Menu options")]
+    public TMP_InputField heightInput;
+    public TMP_InputField widthInput;
+    public TMP_InputField minesInput;
+
+    [SerializeField] Material mineMaterial;
+
+
     [Header("Grid Settings")]
-    public GameObject tilePrefab;  // The prefab for the tiles
-    public int gridWidth = 10;     // Number of tiles in width
-    public int gridHeight = 10;    // Number of tiles in height
-    public float tileSpacing = 1.0f;  // Spacing between tiles
+    [SerializeField]private GameObject tilePrefab;
+    [SerializeField]private int gridWidth = 5;     
+    [SerializeField]private int gridHeight = 5;     
+    [SerializeField]private float tileSpacing = 1.0f; 
+    [SerializeField]private GraphManager graphManager;
 
-    public GraphManager graphManager; // Reference to the GraphManager
+    Structure goldMine;
 
-    private Node[,] grid;  // 2D array to hold the nodes
+    private Node[,] grid;  
 
-    // Method to create the grid
-    public void CreateGrid()
+    private void CreateGrid(int width, int height)
     {
+        gridWidth = width;
+        gridHeight = height;
+        
+
         if (tilePrefab == null)
         {
             Debug.LogError("Tile Prefab is not assigned!");
@@ -55,16 +69,38 @@ public class MapManager : MonoBehaviour
             }
         }
 
-        // Pass the list of nodes to the GraphManager
+       
         if (graphManager != null)
         {
             graphManager.SetNodes(allNodes);
         }
     }
 
-    // Automatically create the grid when the game starts
-    void Start()
+    private void AssignStructureToNode(Structure str) 
     {
-        CreateGrid();
+        int value3 = int.Parse(minesInput.text);
+
+        for (int x = 0; x < value3; x++)
+        {
+            int rand1= Random.Range(0, gridWidth);
+            int rand2= Random.Range(0, gridHeight);
+            if (grid[rand1, rand2].CheckForStructure())
+                grid[rand1, rand2].SetStructure(str);
+            Debug.Log("Set mine at Tile: " + rand1 + ", " + rand2);
+            grid[rand1, rand2].GetComponent<Renderer>().material = mineMaterial;
+        }
     }
+
+    public void InitGameElements()
+    {
+        gridHeight = int.Parse(heightInput.text);
+        gridWidth = int.Parse(widthInput.text);
+
+        CreateGrid(gridWidth, gridHeight);
+        goldMine = new Mine();
+        AssignStructureToNode(goldMine);
+                
+    }
+
+
 }
