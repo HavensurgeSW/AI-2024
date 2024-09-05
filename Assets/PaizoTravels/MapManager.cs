@@ -3,12 +3,15 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+
 public class MapManager : MonoBehaviour
 {
     [Header("Menu options")]
     public TMP_InputField heightInput;
     public TMP_InputField widthInput;
     public TMP_InputField minesInput;
+    public Slider heightSlider;
+    public Slider widthSlider;
 
     [SerializeField] Material mineMaterial;
 
@@ -93,8 +96,12 @@ public class MapManager : MonoBehaviour
 
     public void InitGameElements()
     {
-        gridHeight = int.Parse(heightInput.text);
-        gridWidth = int.Parse(widthInput.text);
+        //gridHeight = int.Parse(heightInput.text);
+        //gridWidth = int.Parse(widthInput.text);
+        
+        gridHeight = Mathf.RoundToInt(heightSlider.value);
+        gridWidth= Mathf.RoundToInt(widthSlider.value);
+      
 
         CreateGrid(gridWidth, gridHeight);
         goldMine = new Mine();

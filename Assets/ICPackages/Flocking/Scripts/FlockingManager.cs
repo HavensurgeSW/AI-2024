@@ -119,7 +119,7 @@ public class FlockingManager : MonoBehaviour
         }
 
         Vector3 avg = Vector3.zero;
-        int count = 0;
+     
 
         foreach (Boid b in insideRadiusBoids)
         {
@@ -127,16 +127,13 @@ public class FlockingManager : MonoBehaviour
             {
                 Vector3 direction = boid.transform.position - b.transform.position;
                 avg += direction.normalized / direction.magnitude; // Normalize and scale by inverse distance
-                count++;
+               
             }
         }
-
-        if (count > 0)
-        {
-            avg /= count;
+            avg /= insideRadiusBoids.Count;
             avg.Normalize();
             avg *= boid.separationStrength; // Scale by a factor to control strength of separation
-        }
+        
 
         return avg;
     }

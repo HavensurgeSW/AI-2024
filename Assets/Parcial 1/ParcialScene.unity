@@ -2389,9 +2389,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18614f3872b52804c9e10a4f3b96b196, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  heightInput: {fileID: 0}
-  widthInput: {fileID: 0}
-  minesInput: {fileID: 0}
+  heightInput: {fileID: 1327622011}
+  widthInput: {fileID: 519485156}
+  minesInput: {fileID: 976733297}
+  heightSlider: {fileID: 1166845919}
+  widthSlider: {fileID: 1633166410}
   mineMaterial: {fileID: 0}
   tilePrefab: {fileID: 1190512131267732313, guid: a4ca306044ec56c4494b45e33d9cc4d5, type: 3}
   gridWidth: 5

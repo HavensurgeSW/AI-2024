@@ -121,4 +121,4 @@ MonoBehaviour:
   speed: 2.5
   turnSpeed: 5
   detectionRadius: 3
-  separationStrength: 1
+  separationStrength: 2
