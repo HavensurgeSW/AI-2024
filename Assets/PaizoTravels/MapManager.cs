@@ -47,15 +47,14 @@ public class MapManager : MonoBehaviour
                 Vector3 position = new Vector3(x * tileSpacing, 0, y * tileSpacing);
                 GameObject tile = Instantiate(tilePrefab, position, Quaternion.identity);
                 tile.name = $"Tile_{x}_{y}";
-                tile.transform.parent = this.transform;  // Set the grid manager as the parent
+                tile.transform.parent = this.transform;
 
                 Node node = tile.GetComponent<Node>();
                 if (node != null)
                 {
                     grid[x, y] = node;
                     allNodes.Add(node);
-
-                    // Add neighbors to the node
+                    
                     if (x > 0)
                     {
                         Node leftNeighbor = grid[x - 1, y];
@@ -98,7 +97,6 @@ public class MapManager : MonoBehaviour
         
         gridHeight = Mathf.RoundToInt(heightSlider.value);
         gridWidth= Mathf.RoundToInt(widthSlider.value);
-      
 
         CreateGrid(gridWidth, gridHeight);
         AssignRandomMines();

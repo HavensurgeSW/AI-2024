@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Traveler : MonoBehaviour
 {
-  
+    int inventory;
     public void MoveToNode()
     {
         // Update current node
