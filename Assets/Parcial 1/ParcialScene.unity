@@ -1108,17 +1108,41 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1248021483}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 1248021484}
+        m_TargetAssemblyTypeName: MapManager, Assembly-CSharp
+        m_MethodName: InitGameElements
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 238854784}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1248021483}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &703684359
 MonoBehaviour:
@@ -2394,7 +2418,7 @@ MonoBehaviour:
   minesInput: {fileID: 976733297}
   heightSlider: {fileID: 1166845919}
   widthSlider: {fileID: 1633166410}
-  mineMaterial: {fileID: 0}
+  mineMaterial: {fileID: 2100000, guid: 17ac6c1615232d642b766bb632dbc319, type: 2}
   tilePrefab: {fileID: 1190512131267732313, guid: a4ca306044ec56c4494b45e33d9cc4d5, type: 3}
   gridWidth: 5
   gridHeight: 5

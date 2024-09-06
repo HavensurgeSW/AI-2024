@@ -12,3 +12,13 @@ public class Traveler : MonoBehaviour
         //transform.position = new Vector3(newNode.Position.x, 0, newNode.Position.y);
     }
 }
+
+public class Matoran : Traveler 
+{
+
+}
+
+public class UssalCrab : Traveler
+{ 
+
+}

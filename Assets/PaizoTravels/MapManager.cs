@@ -23,8 +23,6 @@ public class MapManager : MonoBehaviour
     [SerializeField]private float tileSpacing = 1.0f; 
     [SerializeField]private GraphManager graphManager;
 
-    Structure goldMine;
-
     private Node[,] grid;  
 
     private void CreateGrid(int width, int height)
@@ -79,16 +77,17 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    private void AssignStructureToNode(Structure str) 
+    private void AssignRandomMines() 
     {
-        int value3 = int.Parse(minesInput.text);
+        int totalMines = int.Parse(minesInput.text);
 
-        for (int x = 0; x < value3; x++)
+        for (int x = 0; x < totalMines; x++)
         {
+            Structure protoMine = new Mine();
             int rand1= Random.Range(0, gridWidth);
             int rand2= Random.Range(0, gridHeight);
             if (grid[rand1, rand2].CheckForStructure())
-                grid[rand1, rand2].SetStructure(str);
+                grid[rand1, rand2].SetStructure(protoMine);
             Debug.Log("Set mine at Tile: " + rand1 + ", " + rand2);
             grid[rand1, rand2].GetComponent<Renderer>().material = mineMaterial;
         }
@@ -96,16 +95,13 @@ public class MapManager : MonoBehaviour
 
     public void InitGameElements()
     {
-        //gridHeight = int.Parse(heightInput.text);
-        //gridWidth = int.Parse(widthInput.text);
         
         gridHeight = Mathf.RoundToInt(heightSlider.value);
         gridWidth= Mathf.RoundToInt(widthSlider.value);
       
 
         CreateGrid(gridWidth, gridHeight);
-        goldMine = new Mine();
-        AssignStructureToNode(goldMine);
+        AssignRandomMines();
                 
     }
 
