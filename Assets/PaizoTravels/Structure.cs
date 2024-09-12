@@ -10,11 +10,13 @@ public class Structure
 public class Mine : Structure
 {
     int capacity;
+    int supplies;
 
 }
 
 public class TownCenter : Structure 
 {
     int storage;
+    TownImplement inst; 
     List<Traveler> workers;
 }

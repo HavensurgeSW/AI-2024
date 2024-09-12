@@ -1,15 +1,18 @@
 using UnityEngine;
+using System;
 
 public class Traveler : MonoBehaviour
 {
-    int inventory;
+    [SerializeField]int inventory;
+    private Action something;
+
+    public void Init(Action act)
+    {
+        something = act;
+    }
     public void MoveToNode()
     {
-        // Update current node
-        //CurrentNode = newNode;
-
-        // Move the traveler in Unity (you would need to implement movement logic)
-        //transform.position = new Vector3(newNode.Position.x, 0, newNode.Position.y);
+        
     }
 }
 

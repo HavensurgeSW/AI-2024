@@ -15,9 +15,9 @@ public class MapManager : MonoBehaviour
 
     [SerializeField] Material mineMaterial;
 
-
     [Header("Grid Settings")]
     [SerializeField]private GameObject tilePrefab;
+    [SerializeField]private GameObject townPrefab;
     [SerializeField]private int gridWidth = 5;     
     [SerializeField]private int gridHeight = 5;     
     [SerializeField]private float tileSpacing = 1.0f; 
@@ -76,20 +76,38 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    private void AssignRandomMines() 
+    private void AssignRandomStructures() 
     {
         int totalMines = int.Parse(minesInput.text);
+        int rand1;
+        int rand2;
 
         for (int x = 0; x < totalMines; x++)
         {
             Structure protoMine = new Mine();
-            int rand1= Random.Range(0, gridWidth);
-            int rand2= Random.Range(0, gridHeight);
-            if (grid[rand1, rand2].CheckForStructure())
+            rand1= Random.Range(0, gridWidth);
+            rand2= Random.Range(0, gridHeight);
+            if (grid[rand1, rand2].CheckForStructure()==false)
                 grid[rand1, rand2].SetStructure(protoMine);
             Debug.Log("Set mine at Tile: " + rand1 + ", " + rand2);
             grid[rand1, rand2].GetComponent<Renderer>().material = mineMaterial;
         }
+
+        Structure townCentre = new TownCenter();
+        bool townBuildFinish = false;
+        do
+        {
+            rand1 = Random.Range(0, gridWidth);
+            rand2 = Random.Range(0, gridHeight);
+            if (grid[rand1, rand2].CheckForStructure() == false)
+            {
+                grid[rand1, rand2].SetStructure(townCentre);
+                Instantiate(townPrefab, grid[rand1,rand2].transform);
+                townBuildFinish = true;
+                Debug.Log("Town built at " + rand1 + ", " + rand2);
+            }
+
+        } while (!townBuildFinish);
     }
 
     public void InitGameElements()
@@ -99,7 +117,7 @@ public class MapManager : MonoBehaviour
         gridWidth= Mathf.RoundToInt(widthSlider.value);
 
         CreateGrid(gridWidth, gridHeight);
-        AssignRandomMines();
+        AssignRandomStructures();
                 
     }
 

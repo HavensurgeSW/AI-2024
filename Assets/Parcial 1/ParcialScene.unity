@@ -2420,6 +2420,7 @@ MonoBehaviour:
   widthSlider: {fileID: 1633166410}
   mineMaterial: {fileID: 2100000, guid: 17ac6c1615232d642b766bb632dbc319, type: 2}
   tilePrefab: {fileID: 1190512131267732313, guid: a4ca306044ec56c4494b45e33d9cc4d5, type: 3}
+  townPrefab: {fileID: 7618611248728276596, guid: 4c23ecfb5cec46a4f9e9709e4ca39182, type: 3}
   gridWidth: 5
   gridHeight: 5
   tileSpacing: 1.2
