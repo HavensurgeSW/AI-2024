@@ -286,4 +286,36 @@ public sealed class ReturnToTownState : State {
 
         return behaviours;
     }
+
+    
+}
+
+public sealed class DepositInvState : State {
+    public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
+    {
+        BehaviourActions behaviours = new BehaviourActions();
+        //behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Gathering"); });
+        return behaviours;
+    }
+
+    public override BehaviourActions GetOnExitBehaviours(params object[] parameters)
+    {
+        return default;
+    }
+
+    public override BehaviourActions GetTickBehaviours(params object[] parameters)
+    {
+        BehaviourActions behaviours = new BehaviourActions();
+        
+
+        behaviours.SetTransitionBehaviour(() =>
+        {
+            Debug.Log("Stored light stones!");
+            OnFlag?.Invoke(Flags.OnInvEmpty);
+        });
+
+        return behaviours;
+    }
+
+
 }

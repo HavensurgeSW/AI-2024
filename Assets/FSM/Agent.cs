@@ -41,6 +41,7 @@ public class Agent : MonoBehaviour
         fsm.AddBehaviour<MoveTowardsState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, target, speed, interactDistance }; });
         fsm.AddBehaviour<ReturnToTownState>(Behaviours.ReturnToTown, onTickParameters: () => { return new object[] {transform, town, speed, interactDistance }; });
         fsm.AddBehaviour<GatherResource>(Behaviours.GatherResource);
+        fsm.AddBehaviour<DepositInvState>(Behaviours.DepositInv);
 
         fsm.SetTransition(Behaviours.Idle, Flags.OnInvEmpty,Behaviours.MoveTowards);
         fsm.SetTransition(Behaviours.MoveTowards, Flags.OnTargetReach, Behaviours.GatherResource);
