@@ -270,7 +270,7 @@ public sealed class ReturnToTownState : State {
         float distanceToTGT = Convert.ToSingle(parameters[3]);
 
         BehaviourActions behaviours = new BehaviourActions();
-        behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Moving..."); });
+        //behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Moving..."); });
         behaviours.AddMainThreadBehaviours(0, () =>
         {
             ownerTransform.position = Vector3.MoveTowards(ownerTransform.position, targetTransform.position, speed * Time.deltaTime);

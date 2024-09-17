@@ -40,9 +40,10 @@ public class Agent : MonoBehaviour
 
         fsm.AddBehaviour<MoveTowardsState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, target, speed, interactDistance }; });
         fsm.AddBehaviour<ReturnToTownState>(Behaviours.ReturnToTown, onTickParameters: () => { return new object[] {transform, town, speed, interactDistance }; });
+        fsm.AddBehaviour<GatherResource>(Behaviours.GatherResource);
 
         fsm.SetTransition(Behaviours.Idle, Flags.OnInvEmpty,Behaviours.MoveTowards);
-        fsm.SetTransition(Behaviours.MoveTowards, Flags.OnTargetReach, Behaviours.GatherResource, () => { Debug.Log("Gathered light stones!"); });
+        fsm.SetTransition(Behaviours.MoveTowards, Flags.OnTargetReach, Behaviours.GatherResource);
         fsm.SetTransition(Behaviours.GatherResource, Flags.OnInvFull, Behaviours.ReturnToTown);
         fsm.SetTransition(Behaviours.ReturnToTown, Flags.OnTargetReach, Behaviours.DepositInv, () => { Debug.Log("Deposited light stones!"); });
         fsm.SetTransition(Behaviours.DepositInv, Flags.OnInvEmpty, Behaviours.MoveTowards);
@@ -57,6 +58,8 @@ public class Agent : MonoBehaviour
     void Update()
     {
         fsm.Tick();
+
+        
     }
 
 }
