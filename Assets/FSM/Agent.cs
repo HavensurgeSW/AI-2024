@@ -19,6 +19,7 @@ public class Agent : MonoBehaviour
 
     public Transform target;
     public Transform town;
+    [SerializeField]public List<Transform> waypointQueue;
     public float speed;
     public float interactDistance;
     float explodeDistance;
@@ -38,16 +39,20 @@ public class Agent : MonoBehaviour
         //    onTickParameters: () => { return new object[] { transform, wayPoint1, wayPoint2, target, speed, chaseDistance }; });
         //fsm.AddBehaviour<ExplodeState>(Behaviours.Expode);
 
-        fsm.AddBehaviour<MoveTowardsState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, target, speed, interactDistance }; });
+        //fsm.AddBehaviour<MoveTowardsState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, target, speed, interactDistance }; });
+        fsm.AddBehaviour<MoveTowardsWaypointState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, waypointQueue, speed, interactDistance }; });
         fsm.AddBehaviour<ReturnToTownState>(Behaviours.ReturnToTown, onTickParameters: () => { return new object[] {transform, town, speed, interactDistance }; });
         fsm.AddBehaviour<GatherResource>(Behaviours.GatherResource);
         fsm.AddBehaviour<DepositInvState>(Behaviours.DepositInv);
 
-        fsm.SetTransition(Behaviours.Idle, Flags.OnInvEmpty,Behaviours.MoveTowards);
+        fsm.SetTransition(Behaviours.Idle, Flags.OnInvEmpty, Behaviours.MoveTowards);
         fsm.SetTransition(Behaviours.MoveTowards, Flags.OnTargetReach, Behaviours.GatherResource);
+
+        //fsm.SetTransition(Behaviours.Idle, Flags.OnInvEmpty,Behaviours.MoveTowards);
+        //fsm.SetTransition(Behaviours.MoveTowards, Flags.OnTargetReach, Behaviours.GatherResource);
         fsm.SetTransition(Behaviours.GatherResource, Flags.OnInvFull, Behaviours.ReturnToTown);
         fsm.SetTransition(Behaviours.ReturnToTown, Flags.OnTargetReach, Behaviours.DepositInv, () => { Debug.Log("Deposited light stones!"); });
-        fsm.SetTransition(Behaviours.DepositInv, Flags.OnInvEmpty, Behaviours.MoveTowards);
+        //fsm.SetTransition(Behaviours.DepositInv, Flags.OnInvEmpty, Behaviours.MoveTowards);
         fsm.SetTransition(Behaviours.Patrol, Flags.OnTargetNear, Behaviours.Chase, () => { Debug.Log("Te vi!"); });
         fsm.SetTransition(Behaviours.Chase, Flags.OnTargetReach, Behaviours.Expode);
         fsm.SetTransition(Behaviours.Chase, Flags.OnTargetLost, Behaviours.Patrol);
@@ -58,9 +63,7 @@ public class Agent : MonoBehaviour
     
     void Update()
     {
-        fsm.Tick();
-
-        
+        fsm.Tick();        
     }
 
 }

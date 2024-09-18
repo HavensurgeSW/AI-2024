@@ -249,6 +249,74 @@ public sealed class MoveTowardsState : State
     }
 }
 
+public sealed class MoveTowardsWaypointState : State
+{
+
+    public Queue<Transform> waypoints;
+    private Transform currentTarget;
+    public int showoff = 3;
+
+    public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
+    {
+        BehaviourActions behaviours = new BehaviourActions();
+        
+        return behaviours;
+    }
+
+    public override BehaviourActions GetOnExitBehaviours(params object[] parameters)
+    {
+        return default;
+    }
+
+    public override BehaviourActions GetTickBehaviours(params object[] parameters)
+    {
+
+        Transform ownerTransform = parameters[0] as Transform;
+        waypoints = new Queue<Transform>(parameters[1] as List<Transform>);
+        //Transform targetTransform = parameters[1] as Transform;
+        float speed = Convert.ToSingle(parameters[2]);
+        float distanceToTGT = Convert.ToSingle(parameters[3]);
+
+        BehaviourActions behaviours = new BehaviourActions();
+        ////behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Moving..."); });
+        behaviours.AddMainThreadBehaviours(0, () =>
+        {
+            if (currentTarget != null) { }
+                //ownerTransform.position = Vector3.MoveTowards(ownerTransform.position, currentTarget.position, speed * Time.deltaTime);
+        });
+
+
+        behaviours.SetTransitionBehaviour(() =>
+        {
+            currentTarget = waypoints.Peek();
+
+            if (Vector3.Distance(ownerTransform.position, currentTarget.position) < distanceToTGT)
+            {
+                waypoints.Dequeue();
+                
+                if (waypoints.Count > 0)
+                {
+                    currentTarget = waypoints.Peek();
+                    Debug.Log(waypoints.Peek());
+                }
+                else
+                {
+                    OnFlag?.Invoke(Flags.OnTargetReach);
+                }
+                
+            }
+            else
+            {
+                
+            }
+
+
+        });
+
+        return behaviours;
+    }
+}
+
 public sealed class ReturnToTownState : State {
     public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
     {
