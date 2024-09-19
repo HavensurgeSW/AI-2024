@@ -40,7 +40,9 @@ public class Agent : MonoBehaviour
         //fsm.AddBehaviour<ExplodeState>(Behaviours.Expode);
 
         //fsm.AddBehaviour<MoveTowardsState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, target, speed, interactDistance }; });
-        fsm.AddBehaviour<MoveTowardsWaypointState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, waypointQueue, speed, interactDistance }; });
+        fsm.AddBehaviour<MoveTowardsWaypointState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, speed, waypointQueue, interactDistance }; });
+
+        
         fsm.AddBehaviour<ReturnToTownState>(Behaviours.ReturnToTown, onTickParameters: () => { return new object[] {transform, town, speed, interactDistance }; });
         fsm.AddBehaviour<GatherResource>(Behaviours.GatherResource);
         fsm.AddBehaviour<DepositInvState>(Behaviours.DepositInv);

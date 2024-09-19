@@ -252,14 +252,13 @@ public sealed class MoveTowardsState : State
 public sealed class MoveTowardsWaypointState : State
 {
 
-    public Queue<Transform> waypoints;
+    private Queue<Transform> way = new Queue<Transform>();
     private Transform currentTarget;
-    public int showoff = 3;
 
     public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
     {
         BehaviourActions behaviours = new BehaviourActions();
-        
+               
         return behaviours;
     }
 
@@ -270,34 +269,43 @@ public sealed class MoveTowardsWaypointState : State
 
     public override BehaviourActions GetTickBehaviours(params object[] parameters)
     {
-
         Transform ownerTransform = parameters[0] as Transform;
-        waypoints = new Queue<Transform>(parameters[1] as List<Transform>);
-        //Transform targetTransform = parameters[1] as Transform;
-        float speed = Convert.ToSingle(parameters[2]);
+        List<Transform>waypoints = new List<Transform>();
+        waypoints = parameters[2] as List<Transform>;
+        for (int i = 0; i < waypoints.Count; i++)
+        {
+            way.Enqueue(waypoints[i]);
+        }
+
+
+        float speed = Convert.ToSingle(parameters[1]);
         float distanceToTGT = Convert.ToSingle(parameters[3]);
 
         BehaviourActions behaviours = new BehaviourActions();
-        ////behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Moving..."); });
+
+        currentTarget = way.Peek();
+
+        //behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Moving..."); });
         behaviours.AddMainThreadBehaviours(0, () =>
         {
-            if (currentTarget != null) { }
-                //ownerTransform.position = Vector3.MoveTowards(ownerTransform.position, currentTarget.position, speed * Time.deltaTime);
+            if (currentTarget != null)
+            {
+                ownerTransform.position = Vector3.MoveTowards(ownerTransform.position, currentTarget.position, speed * Time.deltaTime);
+            }
         });
 
 
         behaviours.SetTransitionBehaviour(() =>
         {
-            currentTarget = waypoints.Peek();
-
+            
             if (Vector3.Distance(ownerTransform.position, currentTarget.position) < distanceToTGT)
             {
-                waypoints.Dequeue();
-                
+                               
                 if (waypoints.Count > 0)
                 {
-                    currentTarget = waypoints.Peek();
-                    Debug.Log(waypoints.Peek());
+                    way.Dequeue();
+                    currentTarget = way.Peek();
+                    Debug.Log(way.Peek());
                 }
                 else
                 {
@@ -305,12 +313,6 @@ public sealed class MoveTowardsWaypointState : State
                 }
                 
             }
-            else
-            {
-                
-            }
-
-
         });
 
         return behaviours;
