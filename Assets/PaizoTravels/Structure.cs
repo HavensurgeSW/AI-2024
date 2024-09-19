@@ -19,4 +19,12 @@ public class TownCenter : Structure
     int storage;
     TownImplement inst; 
     List<Traveler> workers;
+    public List<Node> mineLocations = new List<Node>();
+
+    public void SetMineLocations(List<Node> mines){ 
+        for(int i = 0; i < mines.Count; i++)
+        {
+            mineLocations.Add(mines[i]);
+        }
+    }
 }

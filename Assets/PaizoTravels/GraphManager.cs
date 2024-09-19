@@ -30,8 +30,8 @@ public class GraphManager : MonoBehaviour
             if (startNode != null && destinationNode != null)
             {
                 
-                RandomizeDistances();
-                bool pathFound = pathfinding.Dijkstra(startNode, destinationNode);
+               
+                bool pathFound = pathfinding.AStar(startNode, destinationNode, out List<Node> path);
 
                 if (pathFound)
                 {

@@ -39,6 +39,7 @@ public class MapManager : MonoBehaviour
 
         grid = new Node[gridWidth, gridHeight];
         List<Node> allNodes = new List<Node>();
+        
 
         for (int x = 0; x < gridWidth; x++)
         {
@@ -81,19 +82,21 @@ public class MapManager : MonoBehaviour
         int totalMines = int.Parse(minesInput.text);
         int rand1;
         int rand2;
+        List<Node> tempMineList = new List<Node>();
 
         for (int x = 0; x < totalMines; x++)
         {
-            Structure protoMine = new Mine();
+            Mine protoMine = new Mine();
             rand1= Random.Range(0, gridWidth);
             rand2= Random.Range(0, gridHeight);
             if (grid[rand1, rand2].CheckForStructure()==false)
                 grid[rand1, rand2].SetStructure(protoMine);
             Debug.Log("Set mine at Tile: " + rand1 + ", " + rand2);
             grid[rand1, rand2].GetComponent<Renderer>().material = mineMaterial;
+            tempMineList.Add(grid[rand1,rand2]);
         }
 
-        Structure townCentre = new TownCenter();
+        TownCenter townCentre = new TownCenter();
         bool townBuildFinish = false;
         do
         {
@@ -103,6 +106,7 @@ public class MapManager : MonoBehaviour
             {
                 grid[rand1, rand2].SetStructure(townCentre);
                 Instantiate(townPrefab, grid[rand1,rand2].transform);
+                townCentre.SetMineLocations(tempMineList);
                 townBuildFinish = true;
                 Debug.Log("Town built at " + rand1 + ", " + rand2);
             }

@@ -22,15 +22,11 @@ public class Agent : MonoBehaviour
     public float speed;
     public float interactDistance;
   
-    void Start()
-    {
-        Init();
-    }
+    
 
-    private void Init()
+    public void Init()
     {
         fsm = new FSM<Behaviours, Flags>();
-
 
         //fsm.AddBehaviour<MoveTowardsState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, target, speed, interactDistance }; });
         fsm.AddBehaviour<MoveTowardsWaypointState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, speed, waypointQueue, interactDistance }; });
@@ -56,7 +52,7 @@ public class Agent : MonoBehaviour
 
     void Update()
     {
-        fsm.Tick();        
+        fsm.Tick();
     }
 
     public void SetNewPath(List<Node> path)

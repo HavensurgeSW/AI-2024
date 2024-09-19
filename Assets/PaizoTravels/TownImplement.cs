@@ -8,7 +8,7 @@ public class TownImplement : MonoBehaviour
     [SerializeField] GameObject workerPrefab;
     [SerializeField] GameObject caravanPrefab;
 
-    Structure str;
+    TownCenter str;
 
     void Start()
     {
@@ -16,14 +16,14 @@ public class TownImplement : MonoBehaviour
     }
 
 
-    public void CreateAgent(Action onTravelerAction)
+    public void CreateAgent()
     {
 
         GameObject agentInstance = Instantiate(workerPrefab, transform.position, Quaternion.identity);
         Traveler travelerScript = agentInstance.GetComponent<Traveler>();
 
         // Pass the Action to the Traveler script
-        travelerScript.Init(onTravelerAction);
+        travelerScript.Init(this.GetComponent<Node>(), str.mineLocations);
     }
 
     public void CreateAgentDebug() { 
@@ -31,8 +31,8 @@ public class TownImplement : MonoBehaviour
         GameObject agentInstance = Instantiate(workerPrefab, transform.position, Quaternion.identity);
         Traveler travelerScript = agentInstance.GetComponent<Traveler>();
 
-        // Pass the Action to the Traveler script
-        travelerScript.Init(() => { Debug.Log("An action has been triggered!"); });
+       
+        //travelerScript.Init();
     }
 
 
