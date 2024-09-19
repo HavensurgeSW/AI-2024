@@ -5,7 +5,6 @@ using UnityEngine;
 
 public enum Behaviours
 {
-    Chase, Patrol, Expode,
     MoveTowards, GatherResource, DepositInv, Idle, ReturnToTown
 }
 
@@ -22,28 +21,22 @@ public class Agent : MonoBehaviour
     [SerializeField]public List<Transform> waypointQueue;
     public float speed;
     public float interactDistance;
-    float explodeDistance;
-    public float lostDistance;
-
-    public Transform wayPoint1;
-    public Transform wayPoint2;
-    public float chaseDistance;
-    // Start is called before the first frame update
+  
     void Start()
+    {
+        Init();
+    }
+
+    private void Init()
     {
         fsm = new FSM<Behaviours, Flags>();
 
-        //fsm.AddBehaviour<ChaseState>(Behaviours.Chase,
-        //    onTickParameters: () => { return new object[] { transform, target, speed, explodeDistance, lostDistance }; });
-        //fsm.AddBehaviour<PatrolState>(Behaviours.Patrol,
-        //    onTickParameters: () => { return new object[] { transform, wayPoint1, wayPoint2, target, speed, chaseDistance }; });
-        //fsm.AddBehaviour<ExplodeState>(Behaviours.Expode);
 
         //fsm.AddBehaviour<MoveTowardsState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, target, speed, interactDistance }; });
         fsm.AddBehaviour<MoveTowardsWaypointState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, speed, waypointQueue, interactDistance }; });
 
-        
-        fsm.AddBehaviour<ReturnToTownState>(Behaviours.ReturnToTown, onTickParameters: () => { return new object[] {transform, town, speed, interactDistance }; });
+
+        fsm.AddBehaviour<ReturnToTownState>(Behaviours.ReturnToTown, onTickParameters: () => { return new object[] { transform, town, speed, interactDistance }; });
         fsm.AddBehaviour<GatherResource>(Behaviours.GatherResource);
         fsm.AddBehaviour<DepositInvState>(Behaviours.DepositInv);
 
@@ -55,17 +48,23 @@ public class Agent : MonoBehaviour
         fsm.SetTransition(Behaviours.GatherResource, Flags.OnInvFull, Behaviours.ReturnToTown);
         fsm.SetTransition(Behaviours.ReturnToTown, Flags.OnTargetReach, Behaviours.DepositInv, () => { Debug.Log("Deposited light stones!"); });
         //fsm.SetTransition(Behaviours.DepositInv, Flags.OnInvEmpty, Behaviours.MoveTowards);
-        fsm.SetTransition(Behaviours.Patrol, Flags.OnTargetNear, Behaviours.Chase, () => { Debug.Log("Te vi!"); });
-        fsm.SetTransition(Behaviours.Chase, Flags.OnTargetReach, Behaviours.Expode);
-        fsm.SetTransition(Behaviours.Chase, Flags.OnTargetLost, Behaviours.Patrol);
+
 
         fsm.ForceState(Behaviours.MoveTowards);
     }
 
-    
+
     void Update()
     {
         fsm.Tick();        
+    }
+
+    public void SetNewPath(List<Node> path)
+    { 
+        for (int i = 0; i < path.Count; i++)
+        {
+            waypointQueue.Add(path[i].transform);
+        }
     }
 
 }

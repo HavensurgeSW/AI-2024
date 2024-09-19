@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3374413724087218466}
   - component: {fileID: 6243631680919492986}
   - component: {fileID: 961515516243996461}
+  - component: {fileID: 8908983425377529821}
   m_Layer: 0
   m_Name: Traveler
   m_TagString: Untagged
@@ -121,3 +122,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventory: 0
+--- !u!114 &8908983425377529821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5541790569521870068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3b5e9f5d8f6e87409e2f2c2a2ee8ae9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  town: {fileID: 0}
+  waypointQueue: []
+  speed: 2
+  interactDistance: 0.5
+  lostDistance: 0
+  wayPoint1: {fileID: 0}
+  wayPoint2: {fileID: 0}
+  chaseDistance: 0

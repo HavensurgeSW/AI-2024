@@ -131,31 +131,31 @@ public class Pathfinding
         return false;
     }
 
-    public bool AStar(Node startNode, Node destinationNode)
+    public bool AStar(Node startNode, Node destinationNode, out List<Node> path)
     {
+        path = new List<Node>(); // Initialize the output path
+
         if (startNode == null || destinationNode == null) return false;
 
-        // Initialize the open and closed lists
         List<Node> openList = new List<Node>();
         HashSet<Node> closedList = new HashSet<Node>();
 
-        // Initialize the start node
         startNode.cost = 0;
         startNode.heuristic = Heuristic(startNode, destinationNode);
         openList.Add(startNode);
 
         while (openList.Count > 0)
         {
-            // Get the node with the lowest F score (F = G + H)
+            
             Node currentNode = GetNodeWithLowestFScore(openList);
 
-            // If we reach the destination node, we're done
+            
             if (currentNode == destinationNode)
             {
-                Debug.Log("Destination node reached!");
+                path = BuildPath(currentNode);
                 return true;
             }
-           
+
             openList.Remove(currentNode);
             closedList.Add(currentNode);
             currentNode.visited = true;
@@ -165,7 +165,7 @@ public class Pathfinding
             {
                 if (closedList.Contains(neighbor))
                 {
-                    continue; // Skip already evaluated nodes
+                    continue;
                 }
 
                 float tentativeCost = currentNode.cost + Vector3.Distance(currentNode.transform.position, neighbor.transform.position);
@@ -184,8 +184,7 @@ public class Pathfinding
             }
         }
 
-        // Return false if the destination node is not reachable
-        return false;
+        return false; 
     }
 
     // Heuristic function: Using Euclidean distance as a heuristic
@@ -213,7 +212,22 @@ public class Pathfinding
         return lowestFScoreNode;
     }
 
-    // Method to reset all nodes
+    private List<Node> BuildPath(Node destinationNode)
+    {
+        List<Node> path = new List<Node>();
+        Node currentNode = destinationNode;
+
+        while (currentNode != null)
+        {
+            path.Add(currentNode);
+            currentNode = currentNode.previousNode;
+        }
+
+        path.Reverse(); 
+        return path;
+    }
+
+
     public void ResetNodes(List<Node> nodes)
     {
         foreach (Node node in nodes)
