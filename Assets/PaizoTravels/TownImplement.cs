@@ -23,7 +23,7 @@ public class TownImplement : MonoBehaviour
         Traveler travelerScript = agentInstance.GetComponent<Traveler>();
 
         // Pass the Action to the Traveler script
-        travelerScript.Init(this.GetComponent<Node>(), str.mineLocations);
+        //travelerScript.Init(this.GetComponent<Node>(), str.mineLocations);
     }
 
     public void CreateAgentDebug() { 
