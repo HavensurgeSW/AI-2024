@@ -15,10 +15,8 @@ public enum Flags
 public class Agent : MonoBehaviour
 {
     private FSM<Behaviours, Flags> fsm;
-
-    public Transform target;
-    public Transform town;
-    [SerializeField]public List<Transform> waypointQueue;
+    [SerializeField] public List<Transform> waypointQueue;
+    [SerializeField] public List<Transform> reverseQueue;
     public float speed;
     public float interactDistance;
   
@@ -27,28 +25,25 @@ public class Agent : MonoBehaviour
     public void Init(List<Node> path)
     {
         fsm = new FSM<Behaviours, Flags>();
+       
 
         SetNewPath(path);
 
-        //fsm.AddBehaviour<MoveTowardsState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, target, speed, interactDistance }; });
-        fsm.AddBehaviour<MoveTowardsWaypointState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, speed, waypointQueue, interactDistance }; });
-
-
-        fsm.AddBehaviour<ReturnToTownState>(Behaviours.ReturnToTown, onTickParameters: () => { return new object[] { transform, town, speed, interactDistance }; });
-        fsm.AddBehaviour<GatherResource>(Behaviours.GatherResource);
+       
+        fsm.AddBehaviour<MoveTowardsWaypointState>(Behaviours.MoveTowards, onEnterParameters: () => { return new object[] { transform, speed, waypointQueue, interactDistance }; });
+        fsm.AddBehaviour<ReturnToTownState>(Behaviours.ReturnToTown, onEnterParameters: () => { return new object[] { transform, speed, reverseQueue, interactDistance }; });
+        fsm.AddBehaviour<GatherResource>(Behaviours.GatherResource, onTickParameters: () => { return new object[] { }; });
         fsm.AddBehaviour<DepositInvState>(Behaviours.DepositInv);
 
         fsm.SetTransition(Behaviours.Idle, Flags.OnInvEmpty, Behaviours.MoveTowards);
         fsm.SetTransition(Behaviours.MoveTowards, Flags.OnTargetReach, Behaviours.GatherResource);
-
-        //fsm.SetTransition(Behaviours.Idle, Flags.OnInvEmpty,Behaviours.MoveTowards);
-        //fsm.SetTransition(Behaviours.MoveTowards, Flags.OnTargetReach, Behaviours.GatherResource);
         fsm.SetTransition(Behaviours.GatherResource, Flags.OnInvFull, Behaviours.ReturnToTown);
         fsm.SetTransition(Behaviours.ReturnToTown, Flags.OnTargetReach, Behaviours.DepositInv, () => { Debug.Log("Deposited light stones!"); });
-        //fsm.SetTransition(Behaviours.DepositInv, Flags.OnInvEmpty, Behaviours.MoveTowards);
+        fsm.SetTransition(Behaviours.DepositInv, Flags.OnInvEmpty, Behaviours.MoveTowards);
 
 
         fsm.ForceState(Behaviours.MoveTowards);
+        
     }
 
 
@@ -63,6 +58,11 @@ public class Agent : MonoBehaviour
         {
             waypointQueue.Add(path[i].transform);
         }
+        
+        for (int i = path.Count-1; i >= 0; i--) { 
+            reverseQueue.Add(path[i].transform);
+        }
+        //Debug.Log(reverseQueue.Count);
     }
 
 }

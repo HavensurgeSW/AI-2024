@@ -25,7 +25,7 @@ public class MapManager : MonoBehaviour
 
     private Node[,] grid;
     private List<Node> mineList = new List<Node>();
-    private GameObject onukoro;
+
 
 
     private void CreateGrid(int width, int height)
@@ -99,6 +99,8 @@ public class MapManager : MonoBehaviour
             tempMineList.Add(grid[rand1,rand2]);
         }
         TownCenter townCentre = new TownCenter();
+        GameObject TC;
+        TownImplement TI;
         bool townBuildFinish = false;
         do
         {
@@ -107,12 +109,14 @@ public class MapManager : MonoBehaviour
             rand2 = Random.Range(0, gridHeight);
             if (grid[rand1, rand2].CheckForStructure() == false)
             {
-                Instantiate(townPrefab, grid[rand1,rand2].transform);
-                grid[rand1, rand2].SetTown(townCentre);
-                townCentre.SetMineLocations(tempMineList);
+                TC = Instantiate(townPrefab, grid[rand1,rand2].transform);
+                TI = TC.GetComponent<TownImplement>();
+                TI.Init();
+             
 
-                //grid[rand1, rand2].SetTown(townPrefab.GetComponent<TownImplement>().str);
-                //townPrefab.GetComponent<TownImplement>().str.SetMineLocations(tempMineList);
+                grid[rand1, rand2].SetTown(TI.str);
+                TI.ownLocation = grid[rand1, rand2];
+                TI.SetMineLocations(tempMineList);
 
                 townBuildFinish = true;
                 Debug.Log("Town built at " + rand1 + ", " + rand2);

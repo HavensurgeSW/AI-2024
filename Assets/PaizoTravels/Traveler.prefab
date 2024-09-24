@@ -122,6 +122,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventory: 0
+  agent: {fileID: 0}
+  way1: {fileID: 0}
+  way2: {fileID: 0}
 --- !u!114 &8908983425377529821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137,9 +140,6 @@ MonoBehaviour:
   target: {fileID: 0}
   town: {fileID: 0}
   waypointQueue: []
+  reverseQueue: []
   speed: 2
-  interactDistance: 0.5
-  lostDistance: 0
-  wayPoint1: {fileID: 0}
-  wayPoint2: {fileID: 0}
-  chaseDistance: 0
+  interactDistance: 0.01

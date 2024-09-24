@@ -8,31 +8,15 @@ public class Traveler : MonoBehaviour
 {
     [SerializeField]int inventory;
     private Action something;
-    private Agent agent;
+    [SerializeField]private Agent agent;
     private Pathfinding scout;
     List<Node> path;
-    public Node way1;
-    public Node way2;
-
-   
-    public void Init(Node w1, Node w2)
-    {
-        agent = new Agent();
-        scout = new Pathfinding();
-
-        if(scout.AStar(way1, way2, out path))
-        agent.SetNewPath(path);
-        //agent.Init();
-        
-    }
+    List<Node> reversePath;
     public void InitWithPath(List<Node> map) {
-        agent = new Agent();
         scout = new Pathfinding();
-        agent.Init(map);
-        
+        agent = GetComponent<Agent>();
+        agent.Init(map);        
     }
-
-    
 }
 
 public class Matoran : Traveler 

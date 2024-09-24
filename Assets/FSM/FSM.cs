@@ -61,6 +61,7 @@ public class FSM<EnumState, EnumFlag>
     public void ForceState(EnumState state)
     {
         currentState = Convert.ToInt32(state);
+        ExecuteBehaviour(GetCurrentStateOnEnterBehaviours);
     }
 
     public void SetTransition(EnumState originState, EnumFlag flag, EnumState destinationState, Action onTransition = null)
