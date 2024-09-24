@@ -8,34 +8,48 @@ public class TownImplement : MonoBehaviour
     [SerializeField] GameObject workerPrefab;
     [SerializeField] GameObject caravanPrefab;
 
-    TownCenter str;
-
+    public TownCenter str;
+    List<Node> shortestPath;
+    Pathfinding scout;
     void Start()
     {
         str = new TownCenter();
+        scout = new Pathfinding();
+        FindNearestMine();
     }
 
 
     public void CreateAgent()
     {
-
-        GameObject agentInstance = Instantiate(workerPrefab, transform.position, Quaternion.identity);
+        GameObject agentInstance = Instantiate(workerPrefab, this.transform.position, Quaternion.identity);
         Traveler travelerScript = agentInstance.GetComponent<Traveler>();
-
-        // Pass the Action to the Traveler script
-        //travelerScript.Init(this.GetComponent<Node>(), str.mineLocations);
+        travelerScript.InitWithPath(shortestPath);        
     }
 
     public void CreateAgentDebug() { 
 
-        GameObject agentInstance = Instantiate(workerPrefab, transform.position, Quaternion.identity);
+        GameObject agentInstance = Instantiate(workerPrefab, this.transform.position, Quaternion.identity);
         Traveler travelerScript = agentInstance.GetComponent<Traveler>();
 
        
         //travelerScript.Init();
     }
 
-
-
+    void FindNearestMine() {
+        
+        shortestPath = new List<Node>();
+        List<Node> path;
+        
+        foreach (Node mine in str.mineLocations)
+        {
+            if (scout.AStar(str.location, mine, out path)){
+                if (path.Count < shortestPath.Count)
+                {
+                    shortestPath = path;
+                    
+                }
+            }
+        }
+    }
 
 }

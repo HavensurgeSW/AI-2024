@@ -41,6 +41,10 @@ public class Node : MonoBehaviour
         structure = str;       
     }
 
+    public void SetTown(TownCenter str) {
+        structure = str;
+    }
+
     public bool CheckForStructure() { return structure != null; }
 
     public void SetMaterial(Material mat) {

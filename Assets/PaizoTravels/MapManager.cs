@@ -23,7 +23,10 @@ public class MapManager : MonoBehaviour
     [SerializeField]private float tileSpacing = 1.0f; 
     [SerializeField]private GraphManager graphManager;
 
-    private Node[,] grid;  
+    private Node[,] grid;
+    private List<Node> mineList = new List<Node>();
+    private GameObject onukoro;
+
 
     private void CreateGrid(int width, int height)
     {
@@ -95,18 +98,22 @@ public class MapManager : MonoBehaviour
             grid[rand1, rand2].GetComponent<Renderer>().material = mineMaterial;
             tempMineList.Add(grid[rand1,rand2]);
         }
-
         TownCenter townCentre = new TownCenter();
         bool townBuildFinish = false;
         do
         {
+           
             rand1 = Random.Range(0, gridWidth);
             rand2 = Random.Range(0, gridHeight);
             if (grid[rand1, rand2].CheckForStructure() == false)
             {
-                grid[rand1, rand2].SetStructure(townCentre);
                 Instantiate(townPrefab, grid[rand1,rand2].transform);
+                grid[rand1, rand2].SetTown(townCentre);
                 townCentre.SetMineLocations(tempMineList);
+
+                //grid[rand1, rand2].SetTown(townPrefab.GetComponent<TownImplement>().str);
+                //townPrefab.GetComponent<TownImplement>().str.SetMineLocations(tempMineList);
+
                 townBuildFinish = true;
                 Debug.Log("Town built at " + rand1 + ", " + rand2);
             }
@@ -124,6 +131,5 @@ public class MapManager : MonoBehaviour
         AssignRandomStructures();
                 
     }
-
 
 }

@@ -24,9 +24,11 @@ public class Agent : MonoBehaviour
   
     
 
-    public void Init()
+    public void Init(List<Node> path)
     {
         fsm = new FSM<Behaviours, Flags>();
+
+        SetNewPath(path);
 
         //fsm.AddBehaviour<MoveTowardsState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, target, speed, interactDistance }; });
         fsm.AddBehaviour<MoveTowardsWaypointState>(Behaviours.MoveTowards, onTickParameters: () => { return new object[] { transform, speed, waypointQueue, interactDistance }; });

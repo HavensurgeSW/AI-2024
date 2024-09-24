@@ -19,10 +19,16 @@ public class Traveler : MonoBehaviour
     {
         agent = new Agent();
         scout = new Pathfinding();
-        agent.Init();
 
         if(scout.AStar(way1, way2, out path))
         agent.SetNewPath(path);
+        //agent.Init();
+        
+    }
+    public void InitWithPath(List<Node> map) {
+        agent = new Agent();
+        scout = new Pathfinding();
+        agent.Init(map);
         
     }
 
