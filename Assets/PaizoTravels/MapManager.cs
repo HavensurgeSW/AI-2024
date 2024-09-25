@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class MapManager : MonoBehaviour
 {
+    #region UNITY_EDITOR
     [Header("Menu options")]
     public TMP_InputField heightInput;
     public TMP_InputField widthInput;
@@ -13,25 +14,27 @@ public class MapManager : MonoBehaviour
     public Slider heightSlider;
     public Slider widthSlider;
 
-    [SerializeField] Material mineMaterial;
-
     [Header("Grid Settings")]
     [SerializeField]private GameObject tilePrefab;
     [SerializeField]private GameObject townPrefab;
+    [SerializeField]private GameObject minePrefab;
     [SerializeField]private int gridWidth = 5;     
     [SerializeField]private int gridHeight = 5;     
     [SerializeField]private float tileSpacing = 1.0f; 
     [SerializeField]private GraphManager graphManager;
+    #endregion
 
     private Node[,] grid;
     private List<Node> mineList = new List<Node>();
-
-
+    private List<Node> minesInUse = new List<Node>();
+    
 
     private void CreateGrid(int width, int height)
     {
         gridWidth = width;
         gridHeight = height;
+
+        GridUtils.GridSize.Set(gridWidth, gridHeight);
         
 
         if (tilePrefab == null)
@@ -54,6 +57,7 @@ public class MapManager : MonoBehaviour
                 tile.transform.parent = this.transform;
 
                 Node node = tile.GetComponent<Node>();
+                
                 if (node != null)
                 {
                     grid[x, y] = node;
@@ -85,20 +89,24 @@ public class MapManager : MonoBehaviour
         int totalMines = int.Parse(minesInput.text);
         int rand1;
         int rand2;
-        List<Node> tempMineList = new List<Node>();
-
+        
         for (int x = 0; x < totalMines; x++)
         {
             Mine protoMine = new Mine();
             rand1= Random.Range(0, gridWidth);
             rand2= Random.Range(0, gridHeight);
-            if (grid[rand1, rand2].CheckForStructure()==false)
+            if (grid[rand1, rand2].CheckForStructure() == false)
+            {
                 grid[rand1, rand2].SetStructure(protoMine);
-            Debug.Log("Set mine at Tile: " + rand1 + ", " + rand2);
-            grid[rand1, rand2].GetComponent<Renderer>().material = mineMaterial;
-            tempMineList.Add(grid[rand1,rand2]);
+                grid[rand1, rand2].mapPos.x = rand1;
+                grid[rand1, rand2].mapPos.y = rand2;
+                Debug.Log("Set mine at Tile: " + rand1 + ", " + rand2);
+                mineList.Add(grid[rand1, rand2]);
+
+                Instantiate(minePrefab, grid[rand1, rand2].transform);
+            }
         }
-        TownCenter townCentre = new TownCenter();
+
         GameObject TC;
         TownImplement TI;
         bool townBuildFinish = false;
@@ -116,7 +124,7 @@ public class MapManager : MonoBehaviour
 
                 grid[rand1, rand2].SetTown(TI.str);
                 TI.ownLocation = grid[rand1, rand2];
-                TI.SetMineLocations(tempMineList);
+                TI.SetMineLocations(mineList);
 
                 townBuildFinish = true;
                 Debug.Log("Town built at " + rand1 + ", " + rand2);

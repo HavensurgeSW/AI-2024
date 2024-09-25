@@ -84,6 +84,20 @@ public class FSM<EnumState, EnumFlag>
         }
     }
 
+    //public void SetFlag(Enum flag)
+    //{
+    //    if (transitions[currentState, flag] != -1)
+    //    {
+    //        foreach (Action OnExitAction in states[currentState].OnExitBehaviours(onEnterParameters[currentState]))
+    //            OnExitAction?.Invoke();
+
+    //        currentState = relations[currentState, flag];
+
+    //        foreach (Action OnEnterAction in states[currentState].OnEnterBehaviours(onEnterParameters[currentState]))
+    //            OnEnterAction?.Invoke();
+    //    }
+    //}
+
     public void Tick()
     {
         if (behaviours.ContainsKey(currentState))

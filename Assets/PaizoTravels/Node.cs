@@ -10,6 +10,11 @@ public class Node : MonoBehaviour
     public float heuristic = Mathf.Infinity;  // Heuristic (H score) for A* algorithm
     public Node previousNode = null;  // Previous node in the shortest path
 
+    public bool isRoad;
+
+    public Vector2Int mapPos = Vector2Int.zero;
+    
+
     public bool visited = false;  // Whether the node has been visited or not
 
     [Header("Game Properties")]

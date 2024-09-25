@@ -133,8 +133,7 @@ public class Pathfinding
 
     public bool AStar(Node startNode, Node destinationNode, out List<Node> path)
     {
-        path = new List<Node>(); // Initialize the output path
-
+        path = new List<Node>(); 
         if (startNode == null || destinationNode == null) return false;
 
         List<Node> openList = new List<Node>();
@@ -160,7 +159,7 @@ public class Pathfinding
             closedList.Add(currentNode);
             currentNode.visited = true;
 
-            // Explore neighbors
+            
             foreach (Node neighbor in currentNode.neighbors)
             {
                 if (closedList.Contains(neighbor))
@@ -235,4 +234,114 @@ public class Pathfinding
             node.ResetNode();
         }
     }
+
+    #region NEW ASTAR
+    public bool AStar2(Node startNode, Node destinationNode, out List<Node> path, string entityType)
+    {
+        path = new List<Node>();
+        if (startNode == null || destinationNode == null) return false;
+
+        List<Node> openList = new List<Node>();
+        HashSet<Node> closedList = new HashSet<Node>();
+
+        startNode.cost = 0;
+        startNode.heuristic = Heuristic2(startNode, destinationNode);
+        openList.Add(startNode);
+
+        while (openList.Count > 0)
+        {
+            Node currentNode = GetNodeWithLowestFScore2(openList);
+
+            if (currentNode == destinationNode)
+            {
+                path = BuildPath2(currentNode);
+                return true;
+            }
+
+            openList.Remove(currentNode);
+            closedList.Add(currentNode);
+            currentNode.visited = true;
+
+            foreach (Node neighbor in currentNode.neighbors)
+            {
+                if (closedList.Contains(neighbor))
+                {
+                    continue;
+                }
+
+                // Adjust weight based on entity type
+                float extraCost = GetNodeWeight(neighbor, entityType);
+                float tentativeCost = currentNode.cost + Vector3.Distance(currentNode.transform.position, neighbor.transform.position) + extraCost;
+
+                if (!openList.Contains(neighbor) || tentativeCost < neighbor.cost)
+                {
+                    neighbor.previousNode = currentNode;
+                    neighbor.cost = tentativeCost;
+                    neighbor.heuristic = Heuristic2(neighbor, destinationNode);
+
+                    if (!openList.Contains(neighbor))
+                    {
+                        openList.Add(neighbor);
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // Function to adjust the cost based on entity type
+    private float GetNodeWeight(Node node, string entityType)
+    {
+        // If the entity is a Carriage, and the node is not a road, make it expensive to traverse
+        if (entityType == "Carriage" && !node.isRoad)
+        {
+            return 100f; // Arbitrary high value for non-road nodes
+        }
+
+        // If the entity is a Villager, there's no additional cost
+        return 0f;
+    }
+
+    // Heuristic function: Using Euclidean distance as a heuristic
+    private float Heuristic2(Node node, Node destinationNode)
+    {
+        return Vector3.Distance(node.transform.position, destinationNode.transform.position);
+    }
+
+    // Get the node with the lowest F score from the open list
+    private Node GetNodeWithLowestFScore2(List<Node> openList)
+    {
+        Node lowestFScoreNode = openList[0];
+
+        foreach (Node node in openList)
+        {
+            float fScore = node.cost + node.heuristic;
+            float lowestFScore = lowestFScoreNode.cost + lowestFScoreNode.heuristic;
+
+            if (fScore < lowestFScore)
+            {
+                lowestFScoreNode = node;
+            }
+        }
+
+        return lowestFScoreNode;
+    }
+
+    // Build the path by backtracking from the destination node
+    private List<Node> BuildPath2(Node destinationNode)
+    {
+        List<Node> path = new List<Node>();
+        Node currentNode = destinationNode;
+
+        while (currentNode != null)
+        {
+            path.Add(currentNode);
+            currentNode = currentNode.previousNode;
+        }
+
+        path.Reverse(); // Reverse the list to get the correct order from start to destination
+        return path;
+    }
+    #endregion
 }

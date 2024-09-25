@@ -14,6 +14,8 @@ public class TownImplement : MonoBehaviour
     [SerializeField]List<Node> shortestPath;
     Pathfinding scout;
 
+    WorkerManager workerManager;
+
     public static Action<TownImplement> OnInit;
     public void Init()
     {
@@ -61,7 +63,8 @@ public class TownImplement : MonoBehaviour
     {
         GameObject workerInstance = Instantiate(workerPrefab, this.transform.position, Quaternion.identity);
         Traveler travelerScript = workerInstance.GetComponent<Traveler>();
-        travelerScript.InitWithPath(shortestPath);        
+        travelerScript.InitWithPath(shortestPath);    
+        workerManager.AddWorkerToList(travelerScript);
     }
 
 

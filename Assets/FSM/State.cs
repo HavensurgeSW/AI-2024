@@ -50,212 +50,277 @@ public abstract class State
     public abstract BehaviourActions GetOnExitBehaviours(params object[] parameters);
 }
 
-
-public sealed class GatherResource : State
+namespace MovementStates
 {
-    public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
+    public sealed class MoveTowardsWaypointState : State
     {
-        BehaviourActions behaviours = new BehaviourActions();
-        //behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Gathering"); });
-       
-        return behaviours;
-    }
+        private Queue<Transform> way;
+        private Transform currentTarget;
+        private Transform ownerTransform;
+        float speed;
+        float distanceToTGT;
 
-    public override BehaviourActions GetOnExitBehaviours(params object[] parameters)
-    {
-        return default;
-    }
-
-    public override BehaviourActions GetTickBehaviours(params object[] parameters)
-    {
-        BehaviourActions behaviours = new BehaviourActions();
-        behaviours.AddMainThreadBehaviours(0, () => { Debug.Log("Gold +1"); });
-
-        behaviours.SetTransitionBehaviour(() =>
+        public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
         {
-                Debug.Log("Inventory full!");
-                OnFlag?.Invoke(Flags.OnInvFull);       
-        });
+            BehaviourActions behaviours = new BehaviourActions();
 
-        return behaviours;
-    }
-}
-
-public sealed class MoveTowardsWaypointState : State
-{ 
-    private Queue<Transform> way;
-    private Transform currentTarget;
-    private Transform ownerTransform;
-    float speed;
-    float distanceToTGT;
-
-    public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
-    {
-        BehaviourActions behaviours = new BehaviourActions();
-
-        way = new Queue<Transform>();
-        ownerTransform = parameters[0] as Transform;
-        List<Transform> waypoints = new List<Transform>();
-        waypoints = parameters[2] as List<Transform>;
-        for (int i = 0; i < waypoints.Count; i++)
-        {
-            way.Enqueue(waypoints[i]);
-        }
-        speed = Convert.ToSingle(parameters[1]);
-        distanceToTGT = Convert.ToSingle(parameters[3]);
-
-        currentTarget = way.Peek();
-
-        return behaviours;
-    }
-
-    public override BehaviourActions GetOnExitBehaviours(params object[] parameters)
-    {
-        return default;
-    }
-
-    public override BehaviourActions GetTickBehaviours(params object[] parameters)
-    {
-        BehaviourActions behaviours = new BehaviourActions();
-             
-        //behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Moving..."); });
-        behaviours.AddMainThreadBehaviours(0, () =>
-        {
-            if (currentTarget != null)
+            way = new Queue<Transform>();
+            ownerTransform = parameters[0] as Transform;
+            List<Transform> waypoints = new List<Transform>();
+            waypoints = parameters[2] as List<Transform>;
+            for (int i = 0; i < waypoints.Count; i++)
             {
-                ownerTransform.position = Vector3.MoveTowards(ownerTransform.position, currentTarget.position, speed * Time.deltaTime);
+                way.Enqueue(waypoints[i]);
             }
-        });
-        behaviours.SetTransitionBehaviour(() =>
+            speed = Convert.ToSingle(parameters[1]);
+            distanceToTGT = Convert.ToSingle(parameters[3]);
+
+            currentTarget = way.Peek();
+
+            return behaviours;
+        }
+
+        public override BehaviourActions GetOnExitBehaviours(params object[] parameters)
         {
-            
-            if (Vector3.Distance(ownerTransform.position, currentTarget.position) < distanceToTGT)
+            return default;
+        }
+
+        public override BehaviourActions GetTickBehaviours(params object[] parameters)
+        {
+            BehaviourActions behaviours = new BehaviourActions();
+
+            //behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Moving..."); });
+            behaviours.AddMainThreadBehaviours(0, () =>
             {
-                               
-                if (way.Count > 0)
+                if (currentTarget != null)
                 {
-                    way.Dequeue();
-                    Transform tempTry;
-                    
-                    if (way.TryPeek(out tempTry))
+                    ownerTransform.position = Vector3.MoveTowards(ownerTransform.position, currentTarget.position, speed * Time.deltaTime);
+                }
+            });
+            behaviours.SetTransitionBehaviour(() =>
+            {
+
+                if (Vector3.Distance(ownerTransform.position, currentTarget.position) < distanceToTGT)
+                {
+
+                    if (way.Count > 0)
                     {
-                        currentTarget = way.Peek();
+                        way.Dequeue();
+                        Transform tempTry;
+
+                        if (way.TryPeek(out tempTry))
+                        {
+                            currentTarget = way.Peek();
+                        }
+
+                    }
+                    else
+                    {
+                        Debug.Log("Target reached!");
+                        OnFlag?.Invoke(Flags.OnTargetReach);
                     }
 
                 }
-                else
-                {
-                    Debug.Log("Target reached!");
-                    OnFlag?.Invoke(Flags.OnTargetReach);
-                }
-                
-            }
-        });
+            });
 
-        return behaviours;
-    }
-}
-
-public sealed class ReturnToTownState : State {
-    private Queue<Transform> way;
-    private Transform currentTarget;
-    private Transform ownerTransform;
-    float speed;
-    float distanceToTGT;
-
-    public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
-    {
-        BehaviourActions behaviours = new BehaviourActions();
-
-        way = new Queue<Transform>();
-        ownerTransform = parameters[0] as Transform;
-        List<Transform> waypoints = new List<Transform>();
-        waypoints = parameters[2] as List<Transform>;
-        for (int i = 0; i < waypoints.Count; i++)
-        {
-            way.Enqueue(waypoints[i]);
+            return behaviours;
         }
-        speed = Convert.ToSingle(parameters[1]);
-        distanceToTGT = Convert.ToSingle(parameters[3]);
-
-        currentTarget = way.Peek();
-
-        return behaviours;
     }
 
-    public override BehaviourActions GetOnExitBehaviours(params object[] parameters)
+    public sealed class ReturnToTownState : State
     {
-        return default;
-    }
+        private Queue<Transform> way;
+        private Transform currentTarget;
+        private Transform ownerTransform;
+        float speed;
+        float distanceToTGT;
 
-    public override BehaviourActions GetTickBehaviours(params object[] parameters)
-    {
-        BehaviourActions behaviours = new BehaviourActions();
-
-        //behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Moving..."); });
-        behaviours.AddMainThreadBehaviours(0, () =>
+        public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
         {
-            if (currentTarget != null)
+            BehaviourActions behaviours = new BehaviourActions();
+
+            way = new Queue<Transform>();
+            ownerTransform = parameters[0] as Transform;
+            List<Transform> waypoints = new List<Transform>();
+            waypoints = parameters[2] as List<Transform>;
+            for (int i = 0; i < waypoints.Count; i++)
             {
-                ownerTransform.position = Vector3.MoveTowards(ownerTransform.position, currentTarget.position, speed * Time.deltaTime);
+                way.Enqueue(waypoints[i]);
             }
-        });
-        behaviours.SetTransitionBehaviour(() =>
-        {
+            speed = Convert.ToSingle(parameters[1]);
+            distanceToTGT = Convert.ToSingle(parameters[3]);
 
-            if (Vector3.Distance(ownerTransform.position, currentTarget.position) < distanceToTGT)
+            currentTarget = way.Peek();
+
+            return behaviours;
+        }
+
+        public override BehaviourActions GetOnExitBehaviours(params object[] parameters)
+        {
+            return default;
+        }
+
+        public override BehaviourActions GetTickBehaviours(params object[] parameters)
+        {
+            BehaviourActions behaviours = new BehaviourActions();
+
+            //behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Moving..."); });
+            behaviours.AddMainThreadBehaviours(0, () =>
+            {
+                if (currentTarget != null)
+                {
+                    ownerTransform.position = Vector3.MoveTowards(ownerTransform.position, currentTarget.position, speed * Time.deltaTime);
+                }
+            });
+            behaviours.SetTransitionBehaviour(() =>
             {
 
-                if (way.Count > 0)
+                if (Vector3.Distance(ownerTransform.position, currentTarget.position) < distanceToTGT)
                 {
-                    way.Dequeue();
-                    Transform tempTry;
 
-                    if (way.TryPeek(out tempTry))
+                    if (way.Count > 0)
                     {
-                        currentTarget = way.Peek();
+                        way.Dequeue();
+                        Transform tempTry;
+
+                        if (way.TryPeek(out tempTry))
+                        {
+                            currentTarget = way.Peek();
+                        }
+
+                    }
+                    else
+                    {
+                        Debug.Log("Target reached!");
+                        OnFlag?.Invoke(Flags.OnTargetReach);
                     }
 
                 }
-                else
-                {
-                    Debug.Log("Target reached!");
-                    OnFlag?.Invoke(Flags.OnTargetReach);
-                }
+            });
 
-            }
-        });
-
-        return behaviours;
+            return behaviours;
+        }
     }
 }
-
-public sealed class DepositInvState : State {
-    public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
+namespace WorkerInteractStates
+{
+    public sealed class GatherResource : State
     {
-        BehaviourActions behaviours = new BehaviourActions();
-        behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Returned to Onu-Koro"); });
-        return behaviours;
-    }
-
-    public override BehaviourActions GetOnExitBehaviours(params object[] parameters)
-    {
-        return default;
-    }
-
-    public override BehaviourActions GetTickBehaviours(params object[] parameters)
-    {
-        BehaviourActions behaviours = new BehaviourActions();
+        Func<bool> minegold;
+        bool result = false;
+        Func<bool> increasehunger;
+        bool isHungry = false;
         
-
-        behaviours.SetTransitionBehaviour(() =>
+        public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
         {
-            Debug.Log("Stored light stones!");
-            OnFlag?.Invoke(Flags.OnInvEmpty);
-        });
+            BehaviourActions behaviours = new BehaviourActions();
+            
+            Agent.OnStartWork?.Invoke();
+            minegold = parameters[0] as Func<bool>;
+            increasehunger = parameters[1] as Func<bool>;
+         
 
-        return behaviours;
+            return behaviours;
+        }
+
+        public override BehaviourActions GetOnExitBehaviours(params object[] parameters)
+        {
+            return default;
+        }
+
+        public override BehaviourActions GetTickBehaviours(params object[] parameters)
+        {
+            BehaviourActions behaviours = new BehaviourActions();
+            behaviours.AddMainThreadBehaviours(0, () => {
+
+                if ((isHungry = increasehunger.Invoke()) == false)
+                    result = minegold.Invoke();
+                
+            });
+
+            behaviours.SetTransitionBehaviour(() =>
+            {
+                if (isHungry)
+                {
+                    OnFlag?.Invoke(Flags.OnHungry);
+                    
+                }
+
+                if (result)
+                {
+                    OnFlag?.Invoke(Flags.OnInvFull);
+                    Agent.OnFinishWork?.Invoke();
+                }
+
+            });
+
+            return behaviours;
+        }
     }
 
+    public sealed class DepositInvState : State
+    {
+        public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
+        {
+            BehaviourActions behaviours = new BehaviourActions();
+            behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Returned to Onu-Koro"); });
+            return behaviours;
+        }
 
+        public override BehaviourActions GetOnExitBehaviours(params object[] parameters)
+        {
+            return default;
+        }
+
+        public override BehaviourActions GetTickBehaviours(params object[] parameters)
+        {
+            BehaviourActions behaviours = new BehaviourActions();
+
+
+            behaviours.SetTransitionBehaviour(() =>
+            {
+                Agent.OnDeposit?.Invoke();
+                OnFlag?.Invoke(Flags.OnInvEmpty);
+            });
+
+            return behaviours;
+        }
+
+
+    }
+
+    public sealed class FamishedState : State {
+        Action RetrieveFood;
+        Action EatFood;
+        public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
+        {
+            BehaviourActions behaviours = new BehaviourActions();
+            RetrieveFood = parameters[0] as Action;
+            EatFood = parameters[1] as Action;
+            
+            return behaviours;
+        }
+
+        public override BehaviourActions GetOnExitBehaviours(params object[] parameters)
+        {
+            return default;
+        }
+
+        public override BehaviourActions GetTickBehaviours(params object[] parameters)
+        {
+            BehaviourActions behaviours = new BehaviourActions();
+
+            behaviours.AddMainThreadBehaviours(0, () => {                
+                RetrieveFood?.Invoke();
+            });
+
+            behaviours.SetTransitionBehaviour(() =>
+            {
+                OnFlag?.Invoke(Flags.OnEat);
+            });
+
+            return behaviours;
+        }
+
+    }
 }
