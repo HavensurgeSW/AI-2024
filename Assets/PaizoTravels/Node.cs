@@ -3,19 +3,20 @@ using UnityEngine;
 
 public class Node : MonoBehaviour
 {
+
+    #region PATHFINDING_DATA
     [Header("Node Properties")]
     public List<Node> neighbors = new List<Node>();  // List of adjacent nodes
     public float distance = Mathf.Infinity;  // Distance from the start node, initialized to infinity
     public float cost = Mathf.Infinity;  // Cost (G score) for A* and Dijkstra algorithms
     public float heuristic = Mathf.Infinity;  // Heuristic (H score) for A* algorithm
     public Node previousNode = null;  // Previous node in the shortest path
-
-    public bool isRoad;
+    #endregion
 
     public Vector2Int mapPos = Vector2Int.zero;
-    
+    public bool isRoad;
+    public bool visited = false;
 
-    public bool visited = false;  // Whether the node has been visited or not
 
     [Header("Game Properties")]
     [SerializeField] private Structure structure = null;

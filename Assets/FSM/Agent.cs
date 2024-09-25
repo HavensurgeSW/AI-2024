@@ -29,6 +29,8 @@ public class Agent : MonoBehaviour
     int inventoryLimit;
     int lunchboxLimit;
 
+    Behaviours emergencyStateSave;
+
     MineImplement TGTMine;
  
 
@@ -80,6 +82,10 @@ public class Agent : MonoBehaviour
         
     }
 
+    public void SetTargetMine(MineImplement MI) {
+        TGTMine = MI;
+    }
+
     public void SetNewPath(List<Node> path)
     { 
         for (int i = 0; i < path.Count; i++)
@@ -93,6 +99,17 @@ public class Agent : MonoBehaviour
         
     }
 
+    private void OnEnable()
+    {
+        GameUISetup.AlarmRing += AlarmRung;
+        GameUISetup.AlarmCancel += AlarmCanceled;
+    }
+
+    private void OnDisable()
+    {
+        GameUISetup.AlarmRing -= AlarmRung;
+        GameUISetup.AlarmCancel -= AlarmCanceled;
+    }
 
     public bool MineGold(){
         if (inventory >= inventoryLimit &&TGTMine.goldResource<=0)
@@ -105,12 +122,15 @@ public class Agent : MonoBehaviour
         } 
     }
     public bool IncreaseHunger() {
+        hunger++;
         if (hunger < hungerLimit)
         {
-            hunger++;
             return false;
         }
-        else return true;
+        if(hunger == hungerLimit && lunchbox<lunchboxLimit){
+            EatFood();
+        }
+        return true;
        
     }
 
@@ -131,6 +151,18 @@ public class Agent : MonoBehaviour
             lunchbox--;        
         }
     }
+
+    public void AlarmRung() {
+        if (fsm.currentState != Convert.ToInt32(Behaviours.ReturnToTown))
+        {
+            emergencyStateSave = (Behaviours)fsm.currentState;
+            fsm.ForceAbsoluteState(Behaviours.ReturnToTown);
+        }
+    }
+    public void AlarmCanceled() {
+        fsm.ForceState(emergencyStateSave);
+    }
+    
 
 }
 

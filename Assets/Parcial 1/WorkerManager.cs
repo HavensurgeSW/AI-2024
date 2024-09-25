@@ -10,6 +10,9 @@ public class WorkerManager : MonoBehaviour
     List<Traveler> workers;
 
     [SerializeField] private VoronoiHandler voronoiHandler;
+    [SerializeField] private GameObject workerPrefab;
+    [SerializeField] private GameObject caravanPrefab;
+    public List<Node> shortestPath;
 
     private void Start()
     {
@@ -23,6 +26,15 @@ public class WorkerManager : MonoBehaviour
 
     public void AddWorkerToList(Traveler traveler) { 
         workers.Add(traveler);
+    }
+
+
+    public void CreateWorker()
+    {
+        GameObject workerInstance = Instantiate(workerPrefab, this.transform.position, Quaternion.identity);
+        Traveler travelerScript = workerInstance.GetComponent<Traveler>();
+        travelerScript.InitWithPath(shortestPath);
+        AddWorkerToList(travelerScript);
     }
 
     private void OnEnable()

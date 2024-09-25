@@ -16,7 +16,20 @@ public class TownImplement : MonoBehaviour
 
     WorkerManager workerManager;
 
+
+
     public static Action<TownImplement> OnInit;
+    #region ACTION_SUSCRIPTIONS
+    private void OnEnable()
+    {
+        MapManager.RecalculatePaths += RemoveMineFromList;
+     
+    }
+    private void OnDisable()
+    {
+        MapManager.RecalculatePaths -= RemoveMineFromList;
+    }
+    #endregion
     public void Init()
     {
         str = new TownCenter();
@@ -24,7 +37,8 @@ public class TownImplement : MonoBehaviour
         mineLocations = new List<Node>();
         shortestPath = new List<Node>();
         OnInit?.Invoke(this);
-
+        workerManager = GetComponent<WorkerManager>();
+        workerManager.shortestPath = this.shortestPath;
     }
 
 
@@ -59,21 +73,12 @@ public class TownImplement : MonoBehaviour
 
         }
     }
-    public void CreateWorker()
-    {
-        GameObject workerInstance = Instantiate(workerPrefab, this.transform.position, Quaternion.identity);
-        Traveler travelerScript = workerInstance.GetComponent<Traveler>();
-        travelerScript.InitWithPath(shortestPath);    
-        workerManager.AddWorkerToList(travelerScript);
-    }
 
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.P)) {
-            Debug.Log(shortestPath.Count);
-            CreateWorker();
+    void RemoveMineFromList(Node n) {
+        if (mineLocations.Contains(n)) {
+            mineLocations.Remove(n);
         }
+        FindNearestMine();
     }
 
 }

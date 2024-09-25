@@ -6,8 +6,6 @@ using System.Collections.Generic;
 
 public class Traveler : MonoBehaviour
 {
-    [SerializeField]int inventory;
-    private Action something;
     [SerializeField]private Agent agent;
     private Pathfinding scout;
     List<Node> path;
@@ -17,14 +15,8 @@ public class Traveler : MonoBehaviour
         agent = GetComponent<Agent>();
         agent.Init(map);        
     }
-}
 
-public class Matoran : Traveler 
-{
-    
-}
-
-public class UssalCrab : Traveler
-{ 
-
+    public void AssignTargetMine(MineImplement targetMine) { 
+        
+    }
 }

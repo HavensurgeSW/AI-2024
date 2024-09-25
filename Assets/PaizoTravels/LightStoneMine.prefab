@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5553820724212738189}
   - component: {fileID: 8769307626216897558}
   - component: {fileID: 6240636411972016350}
-  - component: {fileID: 8367267257624374052}
+  - component: {fileID: -4957948774007867726}
   m_Layer: 0
   m_Name: LightStoneMine
   m_TagString: Untagged
@@ -108,7 +108,7 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &8367267257624374052
+--- !u!114 &-4957948774007867726
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -117,11 +117,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 7618611248728276596}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d2cbed683185e7469df8d2e7a76e299, type: 3}
+  m_Script: {fileID: 11500000, guid: a9257bc9decc4794293efc5a2dba878e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  workerPrefab: {fileID: 5541790569521870068, guid: b3cd315c9bcfff24bbc7c8e73c8d49ee, type: 3}
-  caravanPrefab: {fileID: 0}
-  mineLocations: []
-  ownLocation: {fileID: 0}
-  shortestPath: []
+  goldResource: 30
+  foodStorage: 15

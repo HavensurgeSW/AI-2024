@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 
 public class MapManager : MonoBehaviour
@@ -27,8 +28,17 @@ public class MapManager : MonoBehaviour
     private Node[,] grid;
     private List<Node> mineList = new List<Node>();
     private List<Node> minesInUse = new List<Node>();
-    
 
+    public static Action<Node> RecalculatePaths;
+
+    private void OnEnable()
+    {
+        MineImplement.OnMineEmpty += RemoveMine;
+    }
+    private void OnDisable()
+    {
+        MineImplement.OnMineEmpty -= RemoveMine;
+    }
     private void CreateGrid(int width, int height)
     {
         gridWidth = width;
@@ -89,7 +99,9 @@ public class MapManager : MonoBehaviour
         int totalMines = int.Parse(minesInput.text);
         int rand1;
         int rand2;
-        
+
+        GameObject MineObject;
+        MineImplement MI = new MineImplement();
         for (int x = 0; x < totalMines; x++)
         {
             Mine protoMine = new Mine();
@@ -103,7 +115,10 @@ public class MapManager : MonoBehaviour
                 Debug.Log("Set mine at Tile: " + rand1 + ", " + rand2);
                 mineList.Add(grid[rand1, rand2]);
 
-                Instantiate(minePrefab, grid[rand1, rand2].transform);
+                MineObject = Instantiate(minePrefab, grid[rand1, rand2].transform);
+                MI = MineObject.GetComponent<MineImplement>();
+                MI.SetCoordinates(new Vector2Int(rand1, rand2));
+
             }
         }
 
@@ -142,6 +157,15 @@ public class MapManager : MonoBehaviour
         CreateGrid(gridWidth, gridHeight);
         AssignRandomStructures();
                 
+    }
+
+    private void RemoveMine(MineImplement m) {
+        Node n = grid[m.GetCoordinates().x, m.GetCoordinates().y];
+        if (mineList.Contains(n))
+        {
+            mineList.Remove(n);
+            RecalculatePaths?.Invoke(n);
+        }
     }
 
 }
