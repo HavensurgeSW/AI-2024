@@ -78,6 +78,7 @@ public class MapManager : MonoBehaviour
                     if (roadify == 1)
                     {
                         node.isRoad = true;
+                        grid[x, y].GetComponent<Renderer>().material =roadMat;
                     }
 
                     if (x > 0)

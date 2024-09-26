@@ -436,3 +436,34 @@ namespace WorkerInteractStates
 
     }
 }
+namespace CrabInteractStates {
+    public sealed class StockMineState : State
+    {
+        public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
+        {
+            BehaviourActions behaviours = new BehaviourActions();
+
+            return behaviours;
+        }
+
+        public override BehaviourActions GetOnExitBehaviours(params object[] parameters)
+        {
+            return default;
+        }
+
+        public override BehaviourActions GetTickBehaviours(params object[] parameters)
+        {
+            BehaviourActions behaviours = new BehaviourActions();
+            behaviours.AddMainThreadBehaviours(0, () => {
+
+            });
+
+            behaviours.SetTransitionBehaviour(() =>
+            {
+
+            });
+
+            return behaviours;
+        }
+    }
+}
