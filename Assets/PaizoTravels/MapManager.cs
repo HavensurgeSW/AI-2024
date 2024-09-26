@@ -9,17 +9,18 @@ public class MapManager : MonoBehaviour
 {
     #region UNITY_EDITOR
     [Header("Menu options")]
-    public Slider heightSlider;
-    public Slider widthSlider;
-    public Slider minesSlider;
+    [SerializeField] Slider heightSlider;
+    [SerializeField] Slider widthSlider;
+    [SerializeField] Slider minesSlider;
+    [SerializeField] Slider sepSlider;
 
     [Header("Grid Settings")]
     [SerializeField]private GameObject tilePrefab;
     [SerializeField]private GameObject townPrefab;
     [SerializeField]private GameObject minePrefab;
     [SerializeField]private int gridWidth = 5;     
-    [SerializeField]private int gridHeight = 5;     
-    [SerializeField]private float tileSpacing = 1.0f; 
+    [SerializeField]private int gridHeight = 5;
+    private float tileSpacing = 1.3f;
     [SerializeField]private GraphManager graphManager;
     #endregion
 
@@ -42,6 +43,7 @@ public class MapManager : MonoBehaviour
     {
         gridWidth = width;
         gridHeight = height;
+        tileSpacing = sepSlider.value;
 
         GridUtils.GridSize.Set(gridWidth, gridHeight);
         
