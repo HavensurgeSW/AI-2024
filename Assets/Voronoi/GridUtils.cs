@@ -7,6 +7,9 @@ public class GridUtils
     public static Vector2Int GridSize;
     public const int invalidPosition = -1;
 
+    public static Vector3 gridBottomLeft;   
+    public static Vector3 gridTopRight;
+
     public static List<int> GetAdjacentSlotIDs(Vector2Int position)
     {
         List<int> IDs = new List<int>();
@@ -24,4 +27,5 @@ public class GridUtils
             return -1;
         return position.y * GridSize.x + position.x;
     }
+
 }

@@ -7,20 +7,24 @@ using UnityEditor;
 public class TownImplement : MonoBehaviour
 {
     public TownCenter str;
+
     public List<Node> mineLocations;
     List<Vector2> mineListCoords;
+
     public Node ownLocation;
-    [SerializeField]List<Node> shortestPath;
-    [SerializeField] List<Node> availableRoad;
+
     Pathfinding scout;
+    [SerializeField]List<Node> shortestPath;
+    [SerializeField]List<Node> availableRoad;
 
     WorkerManager workerManager;
     public WorkerManager GetWM() { 
         return workerManager;
     }
+
     [SerializeField] int goldStock;
 
-
+    List<MineImplement> activeMines;
     public static Action<TownImplement> OnInit;
     public static Action<List<Node>> PathsCompleted;
     #region ACTION_SUSCRIPTIONS
@@ -42,6 +46,7 @@ public class TownImplement : MonoBehaviour
         mineLocations = new List<Node>();
         mineListCoords = new List<Vector2>();
         shortestPath = new List<Node>();
+        activeMines = new List<MineImplement>();
         OnInit?.Invoke(this);
         workerManager = GetComponent<WorkerManager>();
         workerManager.shortestPath = this.shortestPath;
@@ -53,7 +58,12 @@ public class TownImplement : MonoBehaviour
         }
 
         workerManager.WorkerVoronoiHandler.UpdateSectors(mineList);
-        workerManager.CrabVoronoiHandler.UpdateSectors(mineList);
+        workerManager.WorkerVoronoiHandler.Config(GridUtils.gridBottomLeft, GridUtils.gridTopRight);
+
+
+        //workerManager.CrabVoronoiHandler.UpdateSectors(mineList);
+        //workerManager.CrabVoronoiHandler.Config(GridUtils.gridBottomLeft, GridUtils.gridTopRight);
+
         goldStock = 0;
 
 

@@ -28,13 +28,13 @@ public class VoronoiHandler : MonoBehaviour
     #endregion
 
     #region PUBLIC_METHODS
-    public void Config()
+    public void Config(Vector3 bottomLeft, Vector3 topRight)
     {
-        //Configure initial values of voronoi diagram by creating 4 edges that represent it's boundaries (left, up, right, down)
-        edges.Add(new Edge(new Vector2(0, 0), DIR.LEFT));
-        edges.Add(new Edge(new Vector2(0f, GridUtils.GridSize.y), DIR.UP));
-        edges.Add(new Edge(new Vector2(GridUtils.GridSize.x, GridUtils.GridSize.y), DIR.RIGHT));
-        edges.Add(new Edge(new Vector2(GridUtils.GridSize.x, 0f), DIR.DOWN));
+        // Configure initial values of the Voronoi diagram by creating 4 edges representing the boundaries (left, up, right, down)
+        edges.Add(new Edge(new Vector2(bottomLeft.x, bottomLeft.z), DIR.LEFT));
+        edges.Add(new Edge(new Vector2(bottomLeft.x, topRight.z), DIR.UP));
+        edges.Add(new Edge(new Vector2(topRight.x, topRight.z), DIR.RIGHT));
+        edges.Add(new Edge(new Vector2(topRight.x, bottomLeft.z), DIR.DOWN));
     }
 
     public void UpdateSectors(List<(Vector2,float)> mines)

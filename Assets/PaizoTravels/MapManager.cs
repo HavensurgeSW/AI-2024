@@ -52,6 +52,8 @@ public class MapManager : MonoBehaviour
     {
         MineImplement.OnMineEmpty -= RemoveMine;
     }
+    
+
     private void CreateGrid(int width, int height)
     {
         gridWidth = width;
@@ -59,7 +61,6 @@ public class MapManager : MonoBehaviour
         tileSpacing = sepSlider.value;
 
         GridUtils.GridSize.Set(gridWidth, gridHeight);
-        
 
         if (tilePrefab == null)
         {
@@ -69,19 +70,18 @@ public class MapManager : MonoBehaviour
 
         grid = new Node[gridWidth, gridHeight];
         List<Node> allNodes = new List<Node>();
-        
 
         for (int x = 0; x < gridWidth; x++)
         {
             for (int y = 0; y < gridHeight; y++)
             {
-                Vector3 position = new Vector3(x * tileSpacing, 0, y * tileSpacing);
+                Vector3 position = new Vector3(x * tileSpacing, 0, y * tileSpacing);  // World-space position of the tile
                 GameObject tile = Instantiate(tilePrefab, position, Quaternion.identity);
                 tile.name = $"Tile_{x}_{y}";
                 tile.transform.parent = this.transform;
 
                 Node node = tile.GetComponent<Node>();
-                
+
                 if (node != null)
                 {
                     grid[x, y] = node;
@@ -90,7 +90,7 @@ public class MapManager : MonoBehaviour
                     if (roadify == 1)
                     {
                         node.isRoad = true;
-                        grid[x, y].GetComponent<Renderer>().material =roadMat;
+                        grid[x, y].GetComponent<Renderer>().material = roadMat;
                     }
 
                     if (x > 0)
@@ -107,7 +107,10 @@ public class MapManager : MonoBehaviour
             }
         }
 
-       
+        
+        GridUtils.gridBottomLeft = new Vector3(0, 0, 0);  
+        GridUtils.gridTopRight = new Vector3((gridWidth - 1) * tileSpacing, 0, (gridHeight - 1) * tileSpacing); // Top-right corner
+
         if (graphManager != null)
         {
             graphManager.SetNodes(allNodes);
