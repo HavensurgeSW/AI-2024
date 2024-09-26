@@ -53,21 +53,25 @@ public class TownImplement : MonoBehaviour
         OnInit?.Invoke(this);
         workerManager = GetComponent<WorkerManager>();
         SetMineLocations(MineList);
-        //workerManager.shortestPath = this.shortestPath;
+        
+    }
 
-
+    public void UpdateWorkerVoronoiSectors() {
         List<(Vector2, float)> mineList = new List<(Vector2, float)>();
-        foreach (Vector2 m in mineListCoords) {
+        foreach (Vector2 m in mineListCoords)
+        {
             mineList.Add((m, 0.0f));
         }
+        workerManager.WorkerVoronoiHandler.UpdateSectors(mineList);
+    }
 
-        //workerManager.WorkerVoronoiHandler.Config(GridUtils.gridBottomLeft, GridUtils.gridTopRight);
-        //workerManager.CrabVoronoiHandler.Config(GridUtils.gridBottomLeft, GridUtils.gridTopRight);
-        //workerManager.WorkerVoronoiHandler.UpdateSectors(mineList);
-        //workerManager.CrabVoronoiHandler.UpdateSectors(mineList);
-
-
-
+    public void UpdateCrabVoronoiSector() {
+        List<(Vector2, float)> mineList = new List<(Vector2, float)>();
+        foreach (Vector2 m in mineListCoords)
+        {
+            mineList.Add((m, 0.0f));
+        }
+        workerManager.CrabVoronoiHandler.UpdateSectors(mineList);
     }
 
     private void SaveGoldFromWorker(int gold) {
@@ -154,8 +158,12 @@ public class TownImplement : MonoBehaviour
     void RemoveMineFromList(Node n) {
         if (mineLocations.Contains(n)) {
             mineLocations.Remove(n);
+            mineListCoords.Remove(new Vector2(n.mapPos.x, n.mapPos.y));
         }
         FindNearestMine();
+        //List<Node> tempPath = new List<Node>();
+        //scout.AStar(n, mineLocations[0], out tempPath);
+        //workerManager.SetMidPath(tempPath);
         workerManager.AssignMineToWorkers(MapManager.GetNode(new Vector2Int(shortestPath[shortestPath.Count-1].mapPos.x, shortestPath[shortestPath.Count - 1].mapPos.y)).mineInNode);
         PathsCompleted?.Invoke(shortestPath);
     }

@@ -160,6 +160,9 @@ public class MapManager : MonoBehaviour
                 TI = TC.GetComponent<TownImplement>();
                 TI.Init(mineList, grid[rand1, rand2]);
                 TI.GetWM().SetVoronoiManager(WorkerVoronoiHandler, CrabVoronoiHandler);
+                TI.GetWM().WorkerVoronoiHandler.Config(GridUtils.gridBottomLeft, GridUtils.gridTopRight);
+                TI.GetWM().CrabVoronoiHandler.Config(GridUtils.gridBottomLeft, GridUtils.gridTopRight);
+                TI.UpdateWorkerVoronoiSectors();
                 
                 grid[rand1, rand2].SetTown(TI.str);
                            

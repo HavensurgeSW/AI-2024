@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.UI.Image;
 
 public class WorkerManager : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class WorkerManager : MonoBehaviour
     [SerializeField] private GameObject crabPrefab;
     public List<Node> shortestPath;
     public List<Node> availableRoad;
+    public List<Node> midPath;
     private MineImplement closestMine;
 
     private void Start()
@@ -33,6 +35,7 @@ public class WorkerManager : MonoBehaviour
     public void AddWorkerToList(Traveler traveler) { 
         workers.Add(traveler);
     }
+
     public void AddCrabToList(CrabTraveler crab) { 
         crabs.Add(crab);
     }
@@ -41,6 +44,9 @@ public class WorkerManager : MonoBehaviour
         foreach (var worker in workers)
         {
             worker.AssignTargetMine(m);
+        }
+        foreach (var crab in crabs) {
+            crab.AssignTargetMine(m);
         }
 
     }
@@ -87,9 +93,18 @@ public class WorkerManager : MonoBehaviour
         
     }
 
+    public void SetMidPath(List<Node> mp) {
+        midPath.Clear();
+        midPath = new List<Node>();
+        foreach (var worker in workers)
+        {
+            worker.SetMidPath(mp);
+        }
+    }
+
     private void OnEnable()
     {
-        //Agent.OnStartWork += ()=> { };
+        
         
     }
     private void OnDisable()
@@ -112,5 +127,6 @@ public class WorkerManager : MonoBehaviour
         WorkerVoronoiHandler = worker;
         CrabVoronoiHandler = crab;
     }
-    
+
+
 }

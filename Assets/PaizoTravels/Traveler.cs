@@ -22,4 +22,7 @@ public class Traveler : MonoBehaviour
     public void SetShortestPath(List<Node> route) { 
         agent.SetNewPath(route);
     }
+    public void SetMidPath(List<Node> path) {
+        agent.SetMidPath(path);
+    }
 }

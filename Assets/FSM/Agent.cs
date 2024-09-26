@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public enum Behaviours
 {
-    MoveTowards, GatherResource, DepositInv, Idle, ReturnToTown, Famished, NeedsNewPath
+    MoveTowards, GatherResource, DepositInv, Idle, ReturnToTown, Famished, NeedsNewPath, Fleeing
 }
 
 public enum Flags
@@ -39,6 +40,7 @@ public class Agent : MonoBehaviour
     public FSM<Behaviours, Flags> fsm;
     [SerializeField] public List<Transform> waypointQueue;
     [SerializeField] public List<Transform> reverseQueue;
+    [SerializeField] private List<Transform> midQueue;
     public float speed;
     public float interactDistance;
     #endregion
@@ -71,21 +73,26 @@ public class Agent : MonoBehaviour
         fsm.AddBehaviour<WorkerInteractStates.FamishedState>(Behaviours.Famished, onEnterParameters: () => { return new object[] { (Action)RetrieveFood, (Action)EatFood}; });
         fsm.AddBehaviour<WorkerInteractStates.DepositInvState>(Behaviours.DepositInv, onEnterParameters: () => { return new object[] {(Action)DepositResources }; });
         fsm.AddBehaviour<IdleState>(Behaviours.Idle);
+        fsm.AddBehaviour<MovementStates.ReturnToTownState>(Behaviours.Fleeing, onEnterParameters: () => { return new object[] { transform, speed, reverseQueue, interactDistance }; });
        
 
         fsm.SetTransition(Behaviours.Idle, Flags.OnInvEmpty, Behaviours.MoveTowards);
         fsm.SetTransition(Behaviours.MoveTowards, Flags.OnTargetReach, Behaviours.GatherResource, () => { OnStartWork?.Invoke(); });
         fsm.SetTransition(Behaviours.GatherResource, Flags.OnInvFull, Behaviours.ReturnToTown, () => { OnFinishWork?.Invoke(); });
-        fsm.SetTransition(Behaviours.GatherResource, Flags.OnMineDepleted, Behaviours.NeedsNewPath, () => { OnFinishWork?.Invoke(); });
-        fsm.SetTransition(Behaviours.NeedsNewPath, Flags.OnTargetReach, Behaviours.MoveTowards, () => { OnFinishWork?.Invoke(); });
 
+        fsm.SetTransition(Behaviours.GatherResource, Flags.OnMineDepleted, Behaviours.NeedsNewPath, () => { OnFinishWork?.Invoke(); });
+        fsm.SetTransition(Behaviours.MoveTowards, Flags.OnMineDepleted, Behaviours.NeedsNewPath, () => { OnFinishWork?.Invoke(); });
         
+        fsm.SetTransition(Behaviours.NeedsNewPath, Flags.OnTargetReach, Behaviours.MoveTowards, () => { OnFinishWork?.Invoke(); });        
 
         fsm.SetTransition(Behaviours.ReturnToTown, Flags.OnTargetReach, Behaviours.DepositInv);
         fsm.SetTransition(Behaviours.DepositInv, Flags.OnInvEmpty, Behaviours.MoveTowards);
 
         fsm.SetTransition(Behaviours.GatherResource, Flags.OnHungry, Behaviours.Famished);
         fsm.SetTransition(Behaviours.Famished, Flags.OnEat, Behaviours.GatherResource);
+
+        fsm.SetTransition(Behaviours.Fleeing, Flags.OnTargetReach, Behaviours.Idle);
+
         
 
 
@@ -111,11 +118,20 @@ public class Agent : MonoBehaviour
         
     }
 
+    public void SetMidPath(List<Node> path) { 
+        midQueue.Clear();
+        for (int i = 0; i < path.Count; i++)
+        {
+            midQueue.Add(path[i].transform);
+        }
+    }
+
+
     private void OnEnable()
     {
         OnStartWork += () => { ProvideMineData?.Invoke(TGTMine); };
         GameUISetup.AlarmRing += AlarmRung;
-        GameUISetup.AlarmCancel += AlarmCanceled;
+        GameUISetup.AlarmCancel += AlarmCanceled;    
         TownImplement.PathsCompleted += SetNewPath;
         
     }
@@ -126,6 +142,7 @@ public class Agent : MonoBehaviour
         GameUISetup.AlarmRing -= AlarmRung;
         GameUISetup.AlarmCancel -= AlarmCanceled;
         TownImplement.PathsCompleted -= SetNewPath;
+     
     }
 
 
@@ -189,11 +206,8 @@ public class Agent : MonoBehaviour
     }
 
     public void AlarmRung() {
-        if (fsm.currentState != Convert.ToInt32(Behaviours.ReturnToTown))
-        {
-            //emergencyStateSave = (Behaviours)fsm.currentState;
-            fsm.ForceAbsoluteState(Behaviours.ReturnToTown);
-        }
+
+            fsm.ForceAbsoluteState(Behaviours.Fleeing);
     }
     public void AlarmCanceled() {
         fsm.ForceState(Behaviours.MoveTowards);

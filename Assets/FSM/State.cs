@@ -370,12 +370,13 @@ namespace WorkerInteractStates
     public sealed class DepositInvState : State
     {
         Action depositgold;
+        bool actionInvoked = false;
         public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
         {
             BehaviourActions behaviours = new BehaviourActions();
 
             depositgold = parameters[0] as Action;
-            
+          
             return behaviours;
         }
 
@@ -388,11 +389,18 @@ namespace WorkerInteractStates
         {
             BehaviourActions behaviours = new BehaviourActions();
 
-            depositgold?.Invoke();
+            behaviours.AddMainThreadBehaviours(0, () => {
+                depositgold?.Invoke();   
+                actionInvoked = true;
+            });
 
             behaviours.SetTransitionBehaviour(() =>
             {
-                OnFlag?.Invoke(Flags.OnInvEmpty);
+                if (actionInvoked)
+                {
+                    
+                    OnFlag?.Invoke(Flags.OnInvEmpty);
+                }
             });
 
             return behaviours;
@@ -439,10 +447,11 @@ namespace WorkerInteractStates
 namespace CrabInteractStates {
     public sealed class StockMineState : State
     {
+        Action depositresources;
         public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
         {
             BehaviourActions behaviours = new BehaviourActions();
-
+            depositresources = parameters[0] as Action;
             return behaviours;
         }
 
@@ -455,12 +464,12 @@ namespace CrabInteractStates {
         {
             BehaviourActions behaviours = new BehaviourActions();
             behaviours.AddMainThreadBehaviours(0, () => {
-
+                depositresources?.Invoke();
             });
 
             behaviours.SetTransitionBehaviour(() =>
             {
-
+                OnFlag?.Invoke(Flags.OnInvEmpty);
             });
 
             return behaviours;

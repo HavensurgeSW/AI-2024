@@ -61,16 +61,16 @@ public class CrabAgent : MonoBehaviour
         fsm.AddBehaviour<MovementStates.MoveTowardsWaypointState>(Behaviours.MoveTowards, onEnterParameters: () => { return new object[] { transform, speed, waypointQueue, interactDistance }; });
         fsm.AddBehaviour<MovementStates.ReturnToTownState>(Behaviours.ReturnToTown, onEnterParameters: () => { return new object[] { transform, speed, reverseQueue, interactDistance }; });
         fsm.AddBehaviour<MovementStates.NeedsNewPathState>(Behaviours.NeedsNewPath, onEnterParameters: () => { return new object[] { transform, speed, reverseQueue, interactDistance }; });
-        fsm.AddBehaviour<WorkerInteractStates.GatherResource>(Behaviours.GatherResource);
-        fsm.AddBehaviour<WorkerInteractStates.FamishedState>(Behaviours.Famished, onEnterParameters: () => { return new object[] { }; });
-        fsm.AddBehaviour<WorkerInteractStates.DepositInvState>(Behaviours.DepositInv, onEnterParameters: () => { return new object[] {(Action)DepositResources }; });
+        fsm.AddBehaviour<CrabInteractStates.StockMineState>(Behaviours.DepositInv, onEnterParameters: () => { return new object[] {(Action)DepositResources }; });
+        fsm.AddBehaviour<WorkerInteractStates.DepositInvState>(Behaviours.GatherResource, onEnterParameters: () => { return new object[] {(Action)StockSupplies }; });
         fsm.AddBehaviour<IdleState>(Behaviours.Idle);
        
 
         fsm.SetTransition(Behaviours.Idle, Flags.OnInvEmpty, Behaviours.ReturnToTown);
-        fsm.SetTransition(Behaviours.ReturnToTown, Flags.OnTargetReach, Behaviours.GatherResource, () => { OnStartWork?.Invoke(); }); // Gather Resource = stocksupplies
-        fsm.SetTransition(Behaviours.GatherResource, Flags.OnInvFull, Behaviours.MoveTowards, () => { OnFinishWork?.Invoke(); });
-        fsm.SetTransition(Behaviours.GatherResource, Flags.OnInvFull, Behaviours.MoveTowards, () => { OnFinishWork?.Invoke(); });
+        fsm.SetTransition(Behaviours.MoveTowards, Flags.OnTargetReach, Behaviours.DepositInv); // Gather Resource = stocksupplies
+        fsm.SetTransition(Behaviours.DepositInv, Flags.OnInvEmpty, Behaviours.ReturnToTown);
+        fsm.SetTransition(Behaviours.ReturnToTown, Flags.OnTargetReach, Behaviours.GatherResource);
+        fsm.SetTransition(Behaviours.GatherResource, Flags.OnInvFull, Behaviours.MoveTowards);
 
         fsm.SetTransition(Behaviours.GatherResource, Flags.OnMineDepleted, Behaviours.NeedsNewPath, () => { OnFinishWork?.Invoke(); });
         fsm.SetTransition(Behaviours.NeedsNewPath, Flags.OnTargetReach, Behaviours.MoveTowards, () => { OnFinishWork?.Invoke(); });
@@ -118,10 +118,7 @@ public class CrabAgent : MonoBehaviour
     }
 
     public void AlarmRung() {
-        if (fsm.currentState != Convert.ToInt32(Behaviours.ReturnToTown))
-        {
-            //emergencyStateSave = (Behaviours)fsm.currentState;
-        }
+        
         fsm.ForceAbsoluteState(Behaviours.ReturnToTown);
     }
     public void AlarmCanceled() {

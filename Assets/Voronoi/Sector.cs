@@ -81,7 +81,7 @@ public class Sector
                 {
                     if (k == i || k == j) continue;
 
-                    //Comparar si la distancia entre la intersección de las mediatrices y todas las demás minas es más pequeña que la distancia maxima 
+                    
                     //Checks if the distance between the intersectionPoint and the endpoint of  segment is less than the maximum distance
                     if (IsPositionCloser(intersectionPoint, segments[k].endPoint, maxDistance))
                     {
