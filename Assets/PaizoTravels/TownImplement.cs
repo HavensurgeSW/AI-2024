@@ -10,6 +10,7 @@ public class TownImplement : MonoBehaviour
     public List<Node> mineLocations;
     public Node ownLocation;
     [SerializeField]List<Node> shortestPath;
+    [SerializeField] List<Node> availableRoad;
     Pathfinding scout;
 
     WorkerManager workerManager;
@@ -53,6 +54,7 @@ public class TownImplement : MonoBehaviour
             mineLocations.Add(mines[i]);
         }
         FindNearestMine();
+        PaveRoad();
     }
 
     void FindNearestMine() {
@@ -87,12 +89,46 @@ public class TownImplement : MonoBehaviour
         workerManager.SetClosestMine(n);
     }
 
+    void PaveRoad() {
+        List<List<Node>> routes = new List<List<Node>>();
+
+        for (int i = 0; i < mineLocations.Count; i++)
+        {
+            List<Node> path = new List<Node>();
+            scout.AStar2(ownLocation, mineLocations[i], out path);
+            routes.Add(path);
+            availableRoad = path;
+        }
+
+        if (routes.Count == 0)
+        {
+            Debug.Log("Rutas = 0");
+        }
+        foreach (List<Node> r in routes)
+        {
+
+            if (r.Count < availableRoad.Count)
+            {
+                availableRoad.Clear();
+                availableRoad.AddRange(r);
+                if (availableRoad == null)
+                {
+                    Debug.Log("Mas rompido");
+                }
+                workerManager.SetAvailableRoad(availableRoad);
+            }
+
+        }
+        Node n = availableRoad[availableRoad.Count - 1];
+        workerManager.SetClosestMine(n);
+    }
+
     void RemoveMineFromList(Node n) {
         if (mineLocations.Contains(n)) {
             mineLocations.Remove(n);
         }
         FindNearestMine();
-        workerManager.AssignMineToWorkers(MapManager.GetNode(new Vector2Int(n.mapPos.x, n.mapPos.y)).mineInNode);
+        workerManager.AssignMineToWorkers(MapManager.GetNode(new Vector2Int(shortestPath[shortestPath.Count-1].mapPos.x, shortestPath[shortestPath.Count - 1].mapPos.y)).mineInNode);
         PathsCompleted?.Invoke(shortestPath);
     }
 

@@ -17,12 +17,10 @@ public class Pathfinding
             if (!currentNode.visited)
             {
                 currentNode.visited = true;
-                Debug.Log($"Visited Node: {currentNode.gameObject.name}");
-
-                
+                               
                 if (currentNode == destinationNode)
                 {
-                    Debug.Log("Destination node reached!");
+                   
                     return true;
                 }
 
@@ -52,12 +50,9 @@ public class Pathfinding
         while (queue.Count > 0)
         {
             Node currentNode = queue.Dequeue();
-            Debug.Log($"Visited Node: {currentNode.gameObject.name}");
-
-          
             if (currentNode == destinationNode)
             {
-                Debug.Log("Destination node reached!");
+               
                 return true;
             }
 
@@ -186,13 +181,12 @@ public class Pathfinding
         return false; 
     }
 
-    // Heuristic function: Using Euclidean distance as a heuristic
+    
     private float Heuristic(Node node, Node destinationNode)
     {
         return Vector3.Distance(node.transform.position, destinationNode.transform.position);
     }
 
-    // Get the node with the lowest F score from the open list
     private Node GetNodeWithLowestFScore(List<Node> openList)
     {
         Node lowestFScoreNode = openList[0];
@@ -236,7 +230,7 @@ public class Pathfinding
     }
 
     #region NEW ASTAR
-    public bool AStar2(Node startNode, Node destinationNode, out List<Node> path, string entityType)
+    public bool AStar2(Node startNode, Node destinationNode, out List<Node> path)
     {
         path = new List<Node>();
         if (startNode == null || destinationNode == null) return false;
@@ -245,7 +239,7 @@ public class Pathfinding
         HashSet<Node> closedList = new HashSet<Node>();
 
         startNode.cost = 0;
-        startNode.heuristic = Heuristic2(startNode, destinationNode);
+        startNode.heuristic = Heuristic(startNode, destinationNode);
         openList.Add(startNode);
 
         while (openList.Count > 0)
@@ -269,15 +263,14 @@ public class Pathfinding
                     continue;
                 }
 
-                // Adjust weight based on entity type
-                float extraCost = GetNodeWeight(neighbor, entityType);
+                float extraCost = GetNodeWeight(neighbor);
                 float tentativeCost = currentNode.cost + Vector3.Distance(currentNode.transform.position, neighbor.transform.position) + extraCost;
 
                 if (!openList.Contains(neighbor) || tentativeCost < neighbor.cost)
                 {
                     neighbor.previousNode = currentNode;
                     neighbor.cost = tentativeCost;
-                    neighbor.heuristic = Heuristic2(neighbor, destinationNode);
+                    neighbor.heuristic = Heuristic(neighbor, destinationNode);
 
                     if (!openList.Contains(neighbor))
                     {
@@ -290,23 +283,13 @@ public class Pathfinding
         return false;
     }
 
-    // Function to adjust the cost based on entity type
-    private float GetNodeWeight(Node node, string entityType)
-    {
-        // If the entity is a Carriage, and the node is not a road, make it expensive to traverse
-        if (entityType == "Carriage" && !node.isRoad)
+    private float GetNodeWeight(Node node)
+    { 
+        if (!node.isRoad)
         {
-            return 100f; // Arbitrary high value for non-road nodes
+            return 100f; 
         }
-
-        // If the entity is a Villager, there's no additional cost
         return 0f;
-    }
-
-    // Heuristic function: Using Euclidean distance as a heuristic
-    private float Heuristic2(Node node, Node destinationNode)
-    {
-        return Vector3.Distance(node.transform.position, destinationNode.transform.position);
     }
 
     // Get the node with the lowest F score from the open list

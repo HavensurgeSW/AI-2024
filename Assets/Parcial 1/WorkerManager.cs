@@ -10,11 +10,13 @@ public class WorkerManager : MonoBehaviour
     public bool returnToBase = false;
 
     public List<Traveler> workers;
+    public List<CrabTraveler> crabs;
 
     [SerializeField] private VoronoiHandler voronoiHandler;
     [SerializeField] private GameObject workerPrefab;
-    [SerializeField] private GameObject caravanPrefab;
+    [SerializeField] private GameObject crabPrefab;
     public List<Node> shortestPath;
+    public List<Node> availableRoad;
     private MineImplement closestMine;
 
     private void Start()
@@ -30,6 +32,9 @@ public class WorkerManager : MonoBehaviour
 
     public void AddWorkerToList(Traveler traveler) { 
         workers.Add(traveler);
+    }
+    public void AddCrabToList(CrabTraveler crab) { 
+        crabs.Add(crab);
     }
 
     public void AssignMineToWorkers(MineImplement m) {
@@ -48,6 +53,14 @@ public class WorkerManager : MonoBehaviour
         travelerScript.AssignTargetMine(closestMine);
     }
 
+    public void CreateCrab() { 
+        GameObject crabInstance = Instantiate(crabPrefab, this.transform.position, Quaternion.identity);
+        CrabTraveler crabScript = crabInstance.GetComponent<CrabTraveler>();
+        crabScript.InitWithPath(availableRoad);
+        AddCrabToList(crabScript);
+        crabScript.AssignTargetMine(closestMine);        
+    }
+
     public void SetClosestMine(Node n) {
         closestMine = MapManager.GetNode(new Vector2Int(n.mapPos.x, n.mapPos.y)).mineInNode;
     }
@@ -60,6 +73,18 @@ public class WorkerManager : MonoBehaviour
         Node n = MapManager.GetNode(new Vector2Int(sp[sp.Count-1].mapPos.x, sp[sp.Count-1].mapPos.y));
         SetClosestMine(n);
         AssignMineToWorkers(n.mineInNode);
+    }
+
+    public void SetAvailableRoad(List<Node> ar) {
+        availableRoad.Clear();
+        availableRoad.AddRange(ar);
+        foreach (var crab in crabs)
+        {
+            crab.SetShortestPath(ar);
+        }
+        Node n = MapManager.GetNode(new Vector2Int(ar[ar.Count - 1].mapPos.x, ar[ar.Count - 1].mapPos.y));
+        SetClosestMine(n);
+        
     }
 
     private void OnEnable()
@@ -76,6 +101,10 @@ public class WorkerManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.P)) {
             CreateWorker();
+        }
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            CreateCrab();
         }
     }
 }

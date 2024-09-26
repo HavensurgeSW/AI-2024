@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7618611248728276596
+--- !u!1 &5541790569521870068
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,49 +8,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8259576403970841623}
-  - component: {fileID: 5553820724212738189}
-  - component: {fileID: 8769307626216897558}
-  - component: {fileID: 6240636411972016350}
-  - component: {fileID: 8367267257624374052}
-  - component: {fileID: -2654361030634682313}
+  - component: {fileID: 1616387051762713596}
+  - component: {fileID: 2924378789287000241}
+  - component: {fileID: 3374413724087218466}
+  - component: {fileID: 6243631680919492986}
+  - component: {fileID: 161236177372977666}
+  - component: {fileID: 5612540474570594416}
   m_Layer: 0
-  m_Name: OnuKoro
+  m_Name: UssalCrab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8259576403970841623
+--- !u!4 &1616387051762713596
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7618611248728276596}
+  m_GameObject: {fileID: 5541790569521870068}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
-  m_LocalScale: {x: 0.81438, y: 0.26595208, z: 0.81438}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.47423318, y: 0.47423318, z: 0.47423318}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &5553820724212738189
+--- !u!33 &2924378789287000241
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7618611248728276596}
-  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &8769307626216897558
+  m_GameObject: {fileID: 5541790569521870068}
+  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &3374413724087218466
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7618611248728276596}
+  m_GameObject: {fileID: 5541790569521870068}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 38c2ec6cbea03db4e88dbdca15731e60, type: 2}
+  - {fileID: 2100000, guid: 25425d962a6e3fc488c7513246b74ca6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -86,13 +86,13 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &6240636411972016350
+--- !u!136 &6243631680919492986
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7618611248728276596}
+  m_GameObject: {fileID: 5541790569521870068}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -105,42 +105,39 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5000001
+  m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &8367267257624374052
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &161236177372977666
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7618611248728276596}
+  m_GameObject: {fileID: 5541790569521870068}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d2cbed683185e7469df8d2e7a76e299, type: 3}
+  m_Script: {fileID: 11500000, guid: dee66c03b1efb8740896fc12449211a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mineLocations: []
-  ownLocation: {fileID: 0}
-  shortestPath: []
-  goldStock: 0
---- !u!114 &-2654361030634682313
+  agent: {fileID: 5612540474570594416}
+--- !u!114 &5612540474570594416
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7618611248728276596}
+  m_GameObject: {fileID: 5541790569521870068}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25fd195ff2843544e82f64b24a162708, type: 3}
+  m_Script: {fileID: 11500000, guid: a84eb79438b990749a1f0c328e3490f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  returnToBase: 0
-  workers: []
-  crabs: []
-  voronoiHandler: {fileID: 0}
-  workerPrefab: {fileID: 5541790569521870068, guid: b3cd315c9bcfff24bbc7c8e73c8d49ee, type: 3}
-  crabPrefab: {fileID: 5541790569521870068, guid: ce97feba2cfe41949bdc2bb9d8599c3c, type: 3}
-  shortestPath: []
+  inventory: 0
+  inventoryLimit: 0
+  TGTMine: {fileID: 0}
+  waypointQueue: []
+  reverseQueue: []
+  speed: 2
+  interactDistance: 0.01

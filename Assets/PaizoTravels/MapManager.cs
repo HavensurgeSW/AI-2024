@@ -13,6 +13,7 @@ public class MapManager : MonoBehaviour
     [SerializeField] Slider widthSlider;
     [SerializeField] Slider minesSlider;
     [SerializeField] Slider sepSlider;
+    [SerializeField] Material roadMat;
 
     [Header("Grid Settings")]
     [SerializeField]private GameObject tilePrefab;
@@ -73,7 +74,12 @@ public class MapManager : MonoBehaviour
                 {
                     grid[x, y] = node;
                     allNodes.Add(node);
-                    
+                    int roadify = UnityEngine.Random.Range(0, 2);
+                    if (roadify == 1)
+                    {
+                        node.isRoad = true;
+                    }
+
                     if (x > 0)
                     {
                         Node leftNeighbor = grid[x - 1, y];
