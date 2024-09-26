@@ -2,18 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEditor;
 
 public class TownImplement : MonoBehaviour
 {
-
     public TownCenter str;
     public List<Node> mineLocations;
+    List<Vector2> mineListCoords;
     public Node ownLocation;
     [SerializeField]List<Node> shortestPath;
     [SerializeField] List<Node> availableRoad;
     Pathfinding scout;
 
     WorkerManager workerManager;
+    public WorkerManager GetWM() { 
+        return workerManager;
+    }
     [SerializeField] int goldStock;
 
 
@@ -36,11 +40,23 @@ public class TownImplement : MonoBehaviour
         str = new TownCenter();
         scout = new Pathfinding();
         mineLocations = new List<Node>();
+        mineListCoords = new List<Vector2>();
         shortestPath = new List<Node>();
         OnInit?.Invoke(this);
         workerManager = GetComponent<WorkerManager>();
         workerManager.shortestPath = this.shortestPath;
+
+
+        List<(Vector2, float)> mineList = new List<(Vector2, float)>();
+        foreach (Vector2 m in mineListCoords) {
+            mineList.Add((m, 0.0f));
+        }
+
+        workerManager.WorkerVoronoiHandler.UpdateSectors(mineList);
+        workerManager.CrabVoronoiHandler.UpdateSectors(mineList);
         goldStock = 0;
+
+
     }
 
     private void SaveGoldFromWorker(int gold) {
@@ -52,6 +68,7 @@ public class TownImplement : MonoBehaviour
         for (int i = 0; i < mines.Count; i++)
         {
             mineLocations.Add(mines[i]);
+            mineListCoords.Add(new Vector2Int(mines[i].mineInNode.GetCoordinates().x, mines[i].mineInNode.GetCoordinates().y));
         }
         FindNearestMine();
         PaveRoad();

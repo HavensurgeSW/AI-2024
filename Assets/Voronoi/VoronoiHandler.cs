@@ -42,19 +42,19 @@ public class VoronoiHandler : MonoBehaviour
         sectors.Clear();
         if (mines.Count == 0) return;
 
-        //Add mine sectors
+        
         foreach (var mine in mines)
         {
             sectors.Add(new Sector(mine.Item1));
         }
 
-        //Add segment limits
+        
         foreach (var mineSector in sectors)
         {
             mineSector.AddSegmentLimits(edges);
         }
 
-        //Connect mines
+        
         for (int i = 0; i < mines.Count; i++)
         {
             for (int j = 0; j < mines.Count; j++)
@@ -65,7 +65,7 @@ public class VoronoiHandler : MonoBehaviour
             }
         }
 
-        //Set intersections  for each sector
+      
         foreach (var mineSector in sectors)
         {
             mineSector.SetIntersections();

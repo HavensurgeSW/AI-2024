@@ -12,7 +12,8 @@ public class WorkerManager : MonoBehaviour
     public List<Traveler> workers;
     public List<CrabTraveler> crabs;
 
-    [SerializeField] private VoronoiHandler voronoiHandler;
+    [SerializeField] public VoronoiHandler WorkerVoronoiHandler;
+    [SerializeField] public VoronoiHandler CrabVoronoiHandler;
     [SerializeField] private GameObject workerPrefab;
     [SerializeField] private GameObject crabPrefab;
     public List<Node> shortestPath;
@@ -21,8 +22,7 @@ public class WorkerManager : MonoBehaviour
 
     private void Start()
     {
-        workers = new List<Traveler>();      
-        
+        workers = new List<Traveler>();
     }
 
     public void SetReturnToBase() { 
@@ -107,4 +107,10 @@ public class WorkerManager : MonoBehaviour
             CreateCrab();
         }
     }
+
+    public void SetVoronoiManager(VoronoiHandler worker, VoronoiHandler crab) { 
+        WorkerVoronoiHandler = worker;
+        CrabVoronoiHandler = crab;
+    }
+    
 }

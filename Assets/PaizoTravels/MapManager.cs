@@ -7,6 +7,8 @@ using System;
 
 public class MapManager : MonoBehaviour
 {
+    public static MapManager Instance;
+
     #region UNITY_EDITOR
     [Header("Menu options")]
     [SerializeField] Slider heightSlider;
@@ -29,9 +31,19 @@ public class MapManager : MonoBehaviour
     private List<Node> mineList = new List<Node>();
     private List<Node> minesInUse = new List<Node>();
 
-    public static Action<Node> RecalculatePaths;
-    
+    [Header("Voronoi stuff")]
+    [SerializeField] private VoronoiHandler WorkerVoronoiHandler;
+    [SerializeField] private VoronoiHandler CrabVoronoiHandler;
 
+    public static Action<Node> RecalculatePaths;
+
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(this.gameObject);
+    }
     private void OnEnable()
     {
         MineImplement.OnMineEmpty += RemoveMine;
@@ -141,14 +153,15 @@ public class MapManager : MonoBehaviour
             rand2 = UnityEngine.Random.Range(0, gridHeight);
             if (grid[rand1, rand2].CheckForStructure() == false)
             {
-                TC = Instantiate(townPrefab, grid[rand1,rand2].transform);
+                TC = Instantiate(townPrefab, grid[rand1, rand2].transform);
                 TI = TC.GetComponent<TownImplement>();
                 TI.Init();
-             
-
+                TI.GetWM().SetVoronoiManager(WorkerVoronoiHandler, CrabVoronoiHandler);
+                
                 grid[rand1, rand2].SetTown(TI.str);
                 TI.ownLocation = grid[rand1, rand2];
                 TI.SetMineLocations(mineList);
+                
 
                 townBuildFinish = true;
                 //Debug.Log("Town built at " + rand1 + ", " + rand2);

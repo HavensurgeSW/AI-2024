@@ -6,7 +6,7 @@ using UnityEngine;
 public class MineImplement : MonoBehaviour
 {
     public int goldResource = 30;
-    public int foodStorage = 15;
+    public int foodStorage = 9;
 
     private Vector2Int mapPos = new Vector2Int();
 
@@ -33,6 +33,10 @@ public class MineImplement : MonoBehaviour
             Debug.Log("Mine emptied!");
         }
         
+    }
+
+    public void GetSupplied(int supplies) {
+        foodStorage += supplies;
     }
 
     public void SetCoordinates(Vector2Int coord) { 

@@ -67,9 +67,11 @@ public class CrabAgent : MonoBehaviour
         fsm.AddBehaviour<IdleState>(Behaviours.Idle);
        
 
-        fsm.SetTransition(Behaviours.Idle, Flags.OnInvEmpty, Behaviours.MoveTowards);
-        fsm.SetTransition(Behaviours.MoveTowards, Flags.OnTargetReach, Behaviours.GatherResource, () => { OnStartWork?.Invoke(); });
-        fsm.SetTransition(Behaviours.GatherResource, Flags.OnInvFull, Behaviours.ReturnToTown, () => { OnFinishWork?.Invoke(); });
+        fsm.SetTransition(Behaviours.Idle, Flags.OnInvEmpty, Behaviours.ReturnToTown);
+        fsm.SetTransition(Behaviours.ReturnToTown, Flags.OnTargetReach, Behaviours.GatherResource, () => { OnStartWork?.Invoke(); }); // Gather Resource = stocksupplies
+        fsm.SetTransition(Behaviours.GatherResource, Flags.OnInvFull, Behaviours.MoveTowards, () => { OnFinishWork?.Invoke(); });
+        fsm.SetTransition(Behaviours.GatherResource, Flags.OnInvFull, Behaviours.MoveTowards, () => { OnFinishWork?.Invoke(); });
+
         fsm.SetTransition(Behaviours.GatherResource, Flags.OnMineDepleted, Behaviours.NeedsNewPath, () => { OnFinishWork?.Invoke(); });
         fsm.SetTransition(Behaviours.NeedsNewPath, Flags.OnTargetReach, Behaviours.MoveTowards, () => { OnFinishWork?.Invoke(); });
 
@@ -77,11 +79,6 @@ public class CrabAgent : MonoBehaviour
 
         fsm.SetTransition(Behaviours.ReturnToTown, Flags.OnTargetReach, Behaviours.DepositInv);
         fsm.SetTransition(Behaviours.DepositInv, Flags.OnInvEmpty, Behaviours.MoveTowards);
-
-        fsm.SetTransition(Behaviours.GatherResource, Flags.OnHungry, Behaviours.Famished);
-        fsm.SetTransition(Behaviours.Famished, Flags.OnEat, Behaviours.GatherResource);
-        
-
 
         fsm.ForceState(Behaviours.MoveTowards);      
     }
@@ -132,8 +129,12 @@ public class CrabAgent : MonoBehaviour
     }
 
     public void DepositResources() {
-        OnDeposit?.Invoke(inventory);
+        TGTMine.GetSupplied(inventory);
         inventory = 0;
+    }
+
+    public void StockSupplies() {
+        inventory = inventoryLimit;
     }
     
 
