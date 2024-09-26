@@ -16,6 +16,7 @@ public class Node : MonoBehaviour
     public Vector2Int mapPos = Vector2Int.zero;
     public bool isRoad;
     public bool visited = false;
+    public MineImplement mineInNode;
 
 
     [Header("Game Properties")]

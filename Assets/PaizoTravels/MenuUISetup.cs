@@ -1,0 +1,27 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+
+public class MenuUISetup : MonoBehaviour
+{
+
+    [SerializeField] TMP_Text wTextbox;
+    [SerializeField] TMP_Text hTextbox;
+    [SerializeField] TMP_Text mineTextbox;
+    [SerializeField] Slider wSlider;
+    [SerializeField] Slider hSlider;
+    [SerializeField] Slider mineSlider;
+
+    private void Update()
+    {
+        wTextbox.text = "Map Width: "+wSlider.value.ToString();
+        hTextbox.text = "Map Height: " + hSlider.value.ToString();
+        mineTextbox.text = "Amount of gold mines: " + mineSlider.value.ToString(); 
+
+    }
+
+
+}

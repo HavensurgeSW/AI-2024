@@ -15,20 +15,24 @@ public class MineImplement : MonoBehaviour
     #region ACTION_SUSCRIPTIONS
     private void OnEnable()
     {
-        Agent.OnMine += GetMined;
+        
     }
 
     private void OnDisable()
     {
-        Agent.OnMine -= GetMined;
+        
     }
     #endregion
 
     public void GetMined() {
-        if(goldResource>0)
+        if (goldResource > 0)
             goldResource--;
-        else
+        if (goldResource <= 0)
+        {
             OnMineEmpty?.Invoke(this);
+            Debug.Log("Mine emptied!");
+        }
+        
     }
 
     public void SetCoordinates(Vector2Int coord) { 

@@ -17,6 +17,10 @@ public class Traveler : MonoBehaviour
     }
 
     public void AssignTargetMine(MineImplement targetMine) { 
-        
+
+        agent.SetTargetMine(targetMine);
+    }
+    public void SetShortestPath(List<Node> route) { 
+        agent.SetNewPath(route);
     }
 }

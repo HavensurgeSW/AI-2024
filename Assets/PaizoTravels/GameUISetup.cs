@@ -13,16 +13,16 @@ public class GameUISetup : MonoBehaviour
 
     private void OnEnable()
     {
-        TownImplement.OnInit += BindToTown;
+        WorkerManager.OnInit += BindToTown;
     }
 
     private void OnDisable()
     {
-        TownImplement.OnInit -= BindToTown;
+        WorkerManager.OnInit -= BindToTown;
     }
 
-    public void BindToTown(TownImplement TI) {
-        spawnWorkerButton.onClick.AddListener(TI.CreateWorker);
+    public void BindToTown(WorkerManager WM) {
+        spawnWorkerButton.onClick.AddListener(WM.CreateWorker);
     }
 
     public void SoundAlarm() { 

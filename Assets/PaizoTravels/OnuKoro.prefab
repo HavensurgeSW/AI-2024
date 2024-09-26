@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8769307626216897558}
   - component: {fileID: 6240636411972016350}
   - component: {fileID: 8367267257624374052}
+  - component: {fileID: -2654361030634682313}
   m_Layer: 0
   m_Name: OnuKoro
   m_TagString: Untagged
@@ -122,3 +123,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   workerPrefab: {fileID: 5541790569521870068, guid: b3cd315c9bcfff24bbc7c8e73c8d49ee, type: 3}
   caravanPrefab: {fileID: 0}
+  mineLocations: []
+  ownLocation: {fileID: 0}
+  shortestPath: []
+--- !u!114 &-2654361030634682313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7618611248728276596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25fd195ff2843544e82f64b24a162708, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  returnToBase: 0
+  workers: []
+  voronoiHandler: {fileID: 0}
+  workerPrefab: {fileID: 5541790569521870068, guid: b3cd315c9bcfff24bbc7c8e73c8d49ee, type: 3}
+  caravanPrefab: {fileID: 0}
+  shortestPath: []

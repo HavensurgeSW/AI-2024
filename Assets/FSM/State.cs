@@ -50,6 +50,36 @@ public abstract class State
     public abstract BehaviourActions GetOnExitBehaviours(params object[] parameters);
 }
 
+
+public sealed class IdleState : State
+{
+    public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
+    {
+        BehaviourActions behaviours = new BehaviourActions();
+
+        return behaviours;
+    }
+
+    public override BehaviourActions GetOnExitBehaviours(params object[] parameters)
+    {
+        return default;
+    }
+
+    public override BehaviourActions GetTickBehaviours(params object[] parameters)
+    {
+        BehaviourActions behaviours = new BehaviourActions();
+        behaviours.AddMainThreadBehaviours(0, () => {
+           
+        });
+
+        behaviours.SetTransitionBehaviour(() =>
+        {
+
+        });
+
+        return behaviours;
+    }
+}
 namespace MovementStates
 {
     public sealed class MoveTowardsWaypointState : State
@@ -116,7 +146,7 @@ namespace MovementStates
                     }
                     else
                     {
-                        Debug.Log("Target reached!");
+                        
                         OnFlag?.Invoke(Flags.OnTargetReach);
                     }
 
@@ -191,7 +221,82 @@ namespace MovementStates
                     }
                     else
                     {
-                        Debug.Log("Target reached!");
+                       
+                        OnFlag?.Invoke(Flags.OnTargetReach);
+                    }
+
+                }
+            });
+
+            return behaviours;
+        }
+    }
+    public sealed class NeedsNewPathState : State
+    {
+        private Queue<Transform> way;
+        private Transform currentTarget;
+        private Transform ownerTransform;
+        float speed;
+        float distanceToTGT;
+
+        public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
+        {
+            BehaviourActions behaviours = new BehaviourActions();
+
+            way = new Queue<Transform>();
+            ownerTransform = parameters[0] as Transform;
+            List<Transform> waypoints = new List<Transform>();
+            waypoints = parameters[2] as List<Transform>;
+            for (int i = 0; i < waypoints.Count; i++)
+            {
+                way.Enqueue(waypoints[i]);
+            }
+            speed = Convert.ToSingle(parameters[1]);
+            distanceToTGT = Convert.ToSingle(parameters[3]);
+
+            currentTarget = way.Peek();
+
+            return behaviours;
+        }
+
+        public override BehaviourActions GetOnExitBehaviours(params object[] parameters)
+        {
+
+
+            return default;
+        }
+
+        public override BehaviourActions GetTickBehaviours(params object[] parameters)
+        {
+            BehaviourActions behaviours = new BehaviourActions();
+
+            //behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Moving..."); });
+            behaviours.AddMainThreadBehaviours(0, () =>
+            {
+                if (currentTarget != null)
+                {
+                    ownerTransform.position = Vector3.MoveTowards(ownerTransform.position, currentTarget.position, speed * Time.deltaTime);
+                }
+            });
+            behaviours.SetTransitionBehaviour(() =>
+            {
+
+                if (Vector3.Distance(ownerTransform.position, currentTarget.position) < distanceToTGT)
+                {
+
+                    if (way.Count > 0)
+                    {
+                        way.Dequeue();
+                        Transform tempTry;
+
+                        if (way.TryPeek(out tempTry))
+                        {
+                            currentTarget = way.Peek();
+                        }
+
+                    }
+                    else
+                    {
                         OnFlag?.Invoke(Flags.OnTargetReach);
                     }
 
@@ -206,8 +311,8 @@ namespace WorkerInteractStates
 {
     public sealed class GatherResource : State
     {
-        Func<bool> minegold;
-        bool result = false;
+        Func<Agent.MineResult> minegold;
+        Agent.MineResult result = 0;
         Func<bool> increasehunger;
         bool isHungry = false;
         
@@ -217,7 +322,7 @@ namespace WorkerInteractStates
             BehaviourActions behaviours = new BehaviourActions();
             
             Agent.OnStartWork?.Invoke();
-            minegold = parameters[0] as Func<bool>;
+            minegold = parameters[0] as Func<Agent.MineResult>;
             increasehunger = parameters[1] as Func<bool>;
          
 
@@ -233,24 +338,27 @@ namespace WorkerInteractStates
         {
             BehaviourActions behaviours = new BehaviourActions();
             behaviours.AddMainThreadBehaviours(0, () => {
-
-                if ((isHungry = increasehunger.Invoke()) == false)
-                    result = minegold.Invoke();
-                
+                isHungry = increasehunger();
+                if (!isHungry)
+                    result = minegold.Invoke();                             
             });
 
             behaviours.SetTransitionBehaviour(() =>
             {
                 if (isHungry)
                 {
-                    OnFlag?.Invoke(Flags.OnHungry);
-                    
-                }
+                    OnFlag?.Invoke(Flags.OnHungry);                    
+                }           
 
-                if (result)
-                {
-                    OnFlag?.Invoke(Flags.OnInvFull);
-                    Agent.OnFinishWork?.Invoke();
+                switch (result) {
+                    case Agent.MineResult.InvFull:
+                        OnFlag?.Invoke(Flags.OnInvFull);
+                        break;
+                    case Agent.MineResult.NoGold:
+                        OnFlag?.Invoke(Flags.OnMineDepleted);                        
+                        break;
+                    case Agent.MineResult.Success:
+                        break;                     
                 }
 
             });
@@ -261,10 +369,13 @@ namespace WorkerInteractStates
 
     public sealed class DepositInvState : State
     {
+        Action depositgold;
         public override BehaviourActions GetOnEnterBehaviours(params object[] parameters)
         {
             BehaviourActions behaviours = new BehaviourActions();
-            behaviours.AddMultithreadableBehaviours(0, () => { Debug.Log("Returned to Onu-Koro"); });
+
+            depositgold = parameters[0] as Action;
+            
             return behaviours;
         }
 
@@ -277,10 +388,10 @@ namespace WorkerInteractStates
         {
             BehaviourActions behaviours = new BehaviourActions();
 
+            depositgold?.Invoke();
 
             behaviours.SetTransitionBehaviour(() =>
             {
-                Agent.OnDeposit?.Invoke();
                 OnFlag?.Invoke(Flags.OnInvEmpty);
             });
 
@@ -298,7 +409,7 @@ namespace WorkerInteractStates
             BehaviourActions behaviours = new BehaviourActions();
             RetrieveFood = parameters[0] as Action;
             EatFood = parameters[1] as Action;
-            
+                        
             return behaviours;
         }
 

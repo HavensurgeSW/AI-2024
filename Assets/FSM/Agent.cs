@@ -5,33 +5,33 @@ using UnityEngine;
 
 public enum Behaviours
 {
-    MoveTowards, GatherResource, DepositInv, Idle, ReturnToTown, Famished
+    MoveTowards, GatherResource, DepositInv, Idle, ReturnToTown, Famished, NeedsNewPath
 }
 
 public enum Flags
 {
-    OnTargetReach, OnTargetNear,OnTargetLost, OnInvFull, OnInvEmpty, OnHungry, OnEat
+    OnTargetReach, OnTargetNear,OnTargetLost, OnInvFull, OnInvEmpty, OnHungry, OnEat, OnMineDepleted
 }
 
 public class Agent : MonoBehaviour
 {
     public static Action OnStartWork;
     public static Action OnFinishWork;
-    public static Action OnDeposit;
+    public static Action<int> OnDeposit;
     public static Action OnMine;
     public static Action OnLeave;
     public static Action OnFamished;
 
-    int inventory;
-    int hunger;
-    int lunchbox;
-    int hungerLimit;
-    int inventoryLimit;
-    int lunchboxLimit;
+    [SerializeField]int inventory;
+    [SerializeField]int hunger;
+    [SerializeField]int lunchbox;
+    [SerializeField]int hungerLimit;
+    [SerializeField]int inventoryLimit;
+    [SerializeField]int lunchboxLimit;
 
     Behaviours emergencyStateSave;
 
-    MineImplement TGTMine;
+    public MineImplement TGTMine;
  
 
     #region FSM_Parameters
@@ -45,31 +45,45 @@ public class Agent : MonoBehaviour
 
     void Update()
     {
-        fsm.Tick();
+        if (fsm != null)
+        {
+            fsm.Tick();
+        }
     }
+
+
 
     public void Init(List<Node> path)
     {
-        fsm = new FSM<Behaviours, Flags>();
-
         SetNewPath(path);
+
+
         hunger = 0;
         hungerLimit = 3;
         inventory = 0;
         inventoryLimit = 15;
         lunchboxLimit = 6;
         lunchbox = lunchboxLimit;
-        
+
+        fsm = new FSM<Behaviours, Flags>();
         fsm.AddBehaviour<MovementStates.MoveTowardsWaypointState>(Behaviours.MoveTowards, onEnterParameters: () => { return new object[] { transform, speed, waypointQueue, interactDistance }; });
         fsm.AddBehaviour<MovementStates.ReturnToTownState>(Behaviours.ReturnToTown, onEnterParameters: () => { return new object[] { transform, speed, reverseQueue, interactDistance }; });
-        fsm.AddBehaviour<WorkerInteractStates.GatherResource>(Behaviours.GatherResource, onEnterParameters: () => { return new object[] { (Func<bool>)MineGold, (Func<bool>)IncreaseHunger}; });
+        fsm.AddBehaviour<MovementStates.NeedsNewPathState>(Behaviours.NeedsNewPath, onEnterParameters: () => { return new object[] { transform, speed, reverseQueue, interactDistance }; });
+        fsm.AddBehaviour<WorkerInteractStates.GatherResource>(Behaviours.GatherResource, onEnterParameters: () => { return new object[] { (Func<MineResult>)MineGold, (Func<bool>)IncreaseHunger}; });
         fsm.AddBehaviour<WorkerInteractStates.FamishedState>(Behaviours.Famished, onEnterParameters: () => { return new object[] { (Action)RetrieveFood, (Action)EatFood}; });
-        fsm.AddBehaviour<WorkerInteractStates.DepositInvState>(Behaviours.DepositInv);
+        fsm.AddBehaviour<WorkerInteractStates.DepositInvState>(Behaviours.DepositInv, onEnterParameters: () => { return new object[] {(Action)DepositResources }; });
+        fsm.AddBehaviour<IdleState>(Behaviours.Idle);
+       
 
         fsm.SetTransition(Behaviours.Idle, Flags.OnInvEmpty, Behaviours.MoveTowards);
         fsm.SetTransition(Behaviours.MoveTowards, Flags.OnTargetReach, Behaviours.GatherResource, () => { OnStartWork?.Invoke(); });
         fsm.SetTransition(Behaviours.GatherResource, Flags.OnInvFull, Behaviours.ReturnToTown, () => { OnFinishWork?.Invoke(); });
-        fsm.SetTransition(Behaviours.ReturnToTown, Flags.OnTargetReach, Behaviours.DepositInv, () => { OnDeposit?.Invoke(); });
+        fsm.SetTransition(Behaviours.GatherResource, Flags.OnMineDepleted, Behaviours.NeedsNewPath, () => { OnFinishWork?.Invoke(); });
+        fsm.SetTransition(Behaviours.NeedsNewPath, Flags.OnTargetReach, Behaviours.MoveTowards, () => { OnFinishWork?.Invoke(); });
+
+        
+
+        fsm.SetTransition(Behaviours.ReturnToTown, Flags.OnTargetReach, Behaviours.DepositInv);
         fsm.SetTransition(Behaviours.DepositInv, Flags.OnInvEmpty, Behaviours.MoveTowards);
 
         fsm.SetTransition(Behaviours.GatherResource, Flags.OnHungry, Behaviours.Famished);
@@ -77,9 +91,7 @@ public class Agent : MonoBehaviour
         
 
 
-        fsm.ForceState(Behaviours.MoveTowards);
-        
-        
+        fsm.ForceState(Behaviours.MoveTowards);      
     }
 
     public void SetTargetMine(MineImplement MI) {
@@ -87,7 +99,9 @@ public class Agent : MonoBehaviour
     }
 
     public void SetNewPath(List<Node> path)
-    { 
+    {
+        waypointQueue.Clear();
+        reverseQueue.Clear();
         for (int i = 0; i < path.Count; i++)
         {
             waypointQueue.Add(path[i].transform);
@@ -103,33 +117,52 @@ public class Agent : MonoBehaviour
     {
         GameUISetup.AlarmRing += AlarmRung;
         GameUISetup.AlarmCancel += AlarmCanceled;
+        TownImplement.PathsCompleted += SetNewPath;
+        
     }
 
     private void OnDisable()
     {
         GameUISetup.AlarmRing -= AlarmRung;
         GameUISetup.AlarmCancel -= AlarmCanceled;
+        TownImplement.PathsCompleted -= SetNewPath;
     }
 
-    public bool MineGold(){
-        if (inventory >= inventoryLimit &&TGTMine.goldResource<=0)
-            return true;
-        else{ 
+
+    public enum MineResult { 
+        InvFull = 1,
+        NoGold =2,
+        Success =3
+    }
+    public MineResult MineGold(){
+
+        if (inventory >= inventoryLimit)
+            return MineResult.InvFull;
+
+        if (TGTMine.goldResource <= 0)
+            return MineResult.NoGold;
+        
             TGTMine.GetMined();
             inventory++;
-            OnMine?.Invoke();
-            return false;
-        } 
+            return MineResult.Success;        
     }
     public bool IncreaseHunger() {
-        hunger++;
         if (hunger < hungerLimit)
         {
+            hunger++;
             return false;
         }
-        if(hunger == hungerLimit && lunchbox<lunchboxLimit){
+        if (hunger == hungerLimit && lunchbox > 0)
+        {
+            Debug.Log("Eating food");
             EatFood();
+            return true;
         }
+        if (lunchbox == 0) {
+            Debug.Log("Getting food from mine");
+            RetrieveFood();
+        }
+        
         return true;
        
     }
@@ -146,21 +179,29 @@ public class Agent : MonoBehaviour
     }
 
     public void EatFood() {
-        if (lunchbox > 0) {
-            hunger = 0;
+        if (lunchbox > 0) { 
             lunchbox--;        
+            hunger = 0;
         }
+        if (lunchbox == 0)
+            RetrieveFood();
+        
     }
 
     public void AlarmRung() {
         if (fsm.currentState != Convert.ToInt32(Behaviours.ReturnToTown))
         {
-            emergencyStateSave = (Behaviours)fsm.currentState;
+            //emergencyStateSave = (Behaviours)fsm.currentState;
             fsm.ForceAbsoluteState(Behaviours.ReturnToTown);
         }
     }
     public void AlarmCanceled() {
-        fsm.ForceState(emergencyStateSave);
+        fsm.ForceState(Behaviours.MoveTowards);
+    }
+
+    public void DepositResources() {
+        OnDeposit?.Invoke(inventory);
+        inventory = 0;
     }
     
 

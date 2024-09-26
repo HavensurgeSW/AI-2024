@@ -9,11 +9,9 @@ public class MapManager : MonoBehaviour
 {
     #region UNITY_EDITOR
     [Header("Menu options")]
-    public TMP_InputField heightInput;
-    public TMP_InputField widthInput;
-    public TMP_InputField minesInput;
     public Slider heightSlider;
     public Slider widthSlider;
+    public Slider minesSlider;
 
     [Header("Grid Settings")]
     [SerializeField]private GameObject tilePrefab;
@@ -25,11 +23,12 @@ public class MapManager : MonoBehaviour
     [SerializeField]private GraphManager graphManager;
     #endregion
 
-    private Node[,] grid;
+    static private Node[,] grid;
     private List<Node> mineList = new List<Node>();
     private List<Node> minesInUse = new List<Node>();
 
     public static Action<Node> RecalculatePaths;
+    
 
     private void OnEnable()
     {
@@ -96,28 +95,29 @@ public class MapManager : MonoBehaviour
 
     private void AssignRandomStructures() 
     {
-        int totalMines = int.Parse(minesInput.text);
+        int totalMines = (int)minesSlider.value;
         int rand1;
         int rand2;
 
         GameObject MineObject;
-        MineImplement MI = new MineImplement();
+        MineImplement MI;
         for (int x = 0; x < totalMines; x++)
         {
             Mine protoMine = new Mine();
-            rand1= Random.Range(0, gridWidth);
-            rand2= Random.Range(0, gridHeight);
+            rand1= UnityEngine.Random.Range(0, gridWidth);
+            rand2= UnityEngine.Random.Range(0, gridHeight);
             if (grid[rand1, rand2].CheckForStructure() == false)
             {
                 grid[rand1, rand2].SetStructure(protoMine);
                 grid[rand1, rand2].mapPos.x = rand1;
                 grid[rand1, rand2].mapPos.y = rand2;
-                Debug.Log("Set mine at Tile: " + rand1 + ", " + rand2);
+                //Debug.Log("Set mine at Tile: " + rand1 + ", " + rand2);
                 mineList.Add(grid[rand1, rand2]);
 
                 MineObject = Instantiate(minePrefab, grid[rand1, rand2].transform);
                 MI = MineObject.GetComponent<MineImplement>();
                 MI.SetCoordinates(new Vector2Int(rand1, rand2));
+                grid[rand1, rand2].mineInNode = MI;
 
             }
         }
@@ -128,8 +128,8 @@ public class MapManager : MonoBehaviour
         do
         {
            
-            rand1 = Random.Range(0, gridWidth);
-            rand2 = Random.Range(0, gridHeight);
+            rand1 = UnityEngine.Random.Range(0, gridWidth);
+            rand2 = UnityEngine.Random.Range(0, gridHeight);
             if (grid[rand1, rand2].CheckForStructure() == false)
             {
                 TC = Instantiate(townPrefab, grid[rand1,rand2].transform);
@@ -142,7 +142,7 @@ public class MapManager : MonoBehaviour
                 TI.SetMineLocations(mineList);
 
                 townBuildFinish = true;
-                Debug.Log("Town built at " + rand1 + ", " + rand2);
+                //Debug.Log("Town built at " + rand1 + ", " + rand2);
             }
 
         } while (!townBuildFinish);
@@ -164,8 +164,14 @@ public class MapManager : MonoBehaviour
         if (mineList.Contains(n))
         {
             mineList.Remove(n);
+            Debug.Log("Removing mine");
             RecalculatePaths?.Invoke(n);
+            
         }
+    }
+
+    public static Node GetNode(Vector2Int coord) {
+        return grid[coord.x, coord.y];
     }
 
 }

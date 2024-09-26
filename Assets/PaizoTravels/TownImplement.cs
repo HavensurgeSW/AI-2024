@@ -5,8 +5,6 @@ using System;
 
 public class TownImplement : MonoBehaviour
 {
-    [SerializeField] GameObject workerPrefab;
-    [SerializeField] GameObject caravanPrefab;
 
     public TownCenter str;
     public List<Node> mineLocations;
@@ -15,19 +13,21 @@ public class TownImplement : MonoBehaviour
     Pathfinding scout;
 
     WorkerManager workerManager;
-
+    [SerializeField] int goldStock;
 
 
     public static Action<TownImplement> OnInit;
+    public static Action<List<Node>> PathsCompleted;
     #region ACTION_SUSCRIPTIONS
     private void OnEnable()
     {
         MapManager.RecalculatePaths += RemoveMineFromList;
-     
+        Agent.OnDeposit += SaveGoldFromWorker;
     }
     private void OnDisable()
     {
         MapManager.RecalculatePaths -= RemoveMineFromList;
+        Agent.OnDeposit -= SaveGoldFromWorker;
     }
     #endregion
     public void Init()
@@ -39,8 +39,12 @@ public class TownImplement : MonoBehaviour
         OnInit?.Invoke(this);
         workerManager = GetComponent<WorkerManager>();
         workerManager.shortestPath = this.shortestPath;
+        goldStock = 0;
     }
 
+    private void SaveGoldFromWorker(int gold) {
+        goldStock += gold;
+    }
 
     public void SetMineLocations(List<Node> mines)
     {
@@ -62,6 +66,9 @@ public class TownImplement : MonoBehaviour
             shortestPath = path;
         }
 
+        if (routes.Count == 0) {
+            Debug.Log("Rutas = 0");
+        }
         foreach (List<Node> r in routes)
         {
             
@@ -69,9 +76,15 @@ public class TownImplement : MonoBehaviour
             {
                 shortestPath.Clear();
                 shortestPath.AddRange(r);
+                if (shortestPath == null) {
+                    Debug.Log("Mas rompido");
+                }
+                workerManager.SetShortestPath(shortestPath);
             }
 
         }
+        Node n = shortestPath[shortestPath.Count - 1];
+        workerManager.SetClosestMine(n);
     }
 
     void RemoveMineFromList(Node n) {
@@ -79,6 +92,8 @@ public class TownImplement : MonoBehaviour
             mineLocations.Remove(n);
         }
         FindNearestMine();
+        workerManager.AssignMineToWorkers(MapManager.GetNode(new Vector2Int(n.mapPos.x, n.mapPos.y)).mineInNode);
+        PathsCompleted?.Invoke(shortestPath);
     }
 
 }
