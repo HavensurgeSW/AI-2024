@@ -16,6 +16,7 @@ public enum Flags
 public class Agent : MonoBehaviour
 {
     public static Action OnStartWork;
+    public static Action<MineImplement> ProvideMineData;
     public static Action OnFinishWork;
     public static Action<int> OnDeposit;
     public static Action OnMine;
@@ -23,7 +24,7 @@ public class Agent : MonoBehaviour
     public static Action OnFamished;
 
     [SerializeField]int inventory;
-    [SerializeField]int hunger;
+    [SerializeField]int hunger; 
     [SerializeField]int lunchbox;
     [SerializeField]int hungerLimit;
     [SerializeField]int inventoryLimit;
@@ -112,6 +113,7 @@ public class Agent : MonoBehaviour
 
     private void OnEnable()
     {
+        OnStartWork += () => { ProvideMineData?.Invoke(TGTMine); };
         GameUISetup.AlarmRing += AlarmRung;
         GameUISetup.AlarmCancel += AlarmCanceled;
         TownImplement.PathsCompleted += SetNewPath;
@@ -120,6 +122,7 @@ public class Agent : MonoBehaviour
 
     private void OnDisable()
     {
+        //OnStartWork -= () => { };
         GameUISetup.AlarmRing -= AlarmRung;
         GameUISetup.AlarmCancel -= AlarmCanceled;
         TownImplement.PathsCompleted -= SetNewPath;

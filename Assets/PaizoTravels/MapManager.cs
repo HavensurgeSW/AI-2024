@@ -158,14 +158,12 @@ public class MapManager : MonoBehaviour
             {
                 TC = Instantiate(townPrefab, grid[rand1, rand2].transform);
                 TI = TC.GetComponent<TownImplement>();
-                TI.Init();
+                TI.Init(mineList, grid[rand1, rand2]);
                 TI.GetWM().SetVoronoiManager(WorkerVoronoiHandler, CrabVoronoiHandler);
                 
                 grid[rand1, rand2].SetTown(TI.str);
-                TI.ownLocation = grid[rand1, rand2];
-                TI.SetMineLocations(mineList);
+                           
                 
-
                 townBuildFinish = true;
                 //Debug.Log("Town built at " + rand1 + ", " + rand2);
             }

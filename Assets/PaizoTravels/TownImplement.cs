@@ -10,6 +10,7 @@ public class TownImplement : MonoBehaviour
 
     public List<Node> mineLocations;
     List<Vector2> mineListCoords;
+    List<MineImplement> activeMines;
 
     public Node ownLocation;
 
@@ -24,7 +25,6 @@ public class TownImplement : MonoBehaviour
 
     [SerializeField] int goldStock;
 
-    List<MineImplement> activeMines;
     public static Action<TownImplement> OnInit;
     public static Action<List<Node>> PathsCompleted;
     #region ACTION_SUSCRIPTIONS
@@ -32,6 +32,7 @@ public class TownImplement : MonoBehaviour
     {
         MapManager.RecalculatePaths += RemoveMineFromList;
         Agent.OnDeposit += SaveGoldFromWorker;
+        //Agent.ProvideMineData += () => { };
     }
     private void OnDisable()
     {
@@ -39,8 +40,10 @@ public class TownImplement : MonoBehaviour
         Agent.OnDeposit -= SaveGoldFromWorker;
     }
     #endregion
-    public void Init()
+    public void Init(List<Node> MineList, Node selfLocation)
     {
+        goldStock = 0;
+        ownLocation = selfLocation;
         str = new TownCenter();
         scout = new Pathfinding();
         mineLocations = new List<Node>();
@@ -49,7 +52,8 @@ public class TownImplement : MonoBehaviour
         activeMines = new List<MineImplement>();
         OnInit?.Invoke(this);
         workerManager = GetComponent<WorkerManager>();
-        workerManager.shortestPath = this.shortestPath;
+        SetMineLocations(MineList);
+        //workerManager.shortestPath = this.shortestPath;
 
 
         List<(Vector2, float)> mineList = new List<(Vector2, float)>();
@@ -57,14 +61,11 @@ public class TownImplement : MonoBehaviour
             mineList.Add((m, 0.0f));
         }
 
-        workerManager.WorkerVoronoiHandler.UpdateSectors(mineList);
-        workerManager.WorkerVoronoiHandler.Config(GridUtils.gridBottomLeft, GridUtils.gridTopRight);
-
-
-        //workerManager.CrabVoronoiHandler.UpdateSectors(mineList);
+        //workerManager.WorkerVoronoiHandler.Config(GridUtils.gridBottomLeft, GridUtils.gridTopRight);
         //workerManager.CrabVoronoiHandler.Config(GridUtils.gridBottomLeft, GridUtils.gridTopRight);
+        //workerManager.WorkerVoronoiHandler.UpdateSectors(mineList);
+        //workerManager.CrabVoronoiHandler.UpdateSectors(mineList);
 
-        goldStock = 0;
 
 
     }
@@ -158,5 +159,6 @@ public class TownImplement : MonoBehaviour
         workerManager.AssignMineToWorkers(MapManager.GetNode(new Vector2Int(shortestPath[shortestPath.Count-1].mapPos.x, shortestPath[shortestPath.Count - 1].mapPos.y)).mineInNode);
         PathsCompleted?.Invoke(shortestPath);
     }
+
 
 }
